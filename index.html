@@ -331,8 +331,8 @@
         return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
       }
 
-      /* ============ in-session state (this link version keeps entries
-         for the visit only; the full app saves them) ============ */
+      /* ============ saved state: entries save on this device
+         (localStorage), so they are still here when you come back ============ */
       var EMPTY_DAY = { verseRef: null, thanksgiving: "", requests: "", peopleOnHeart: "", listening: "", oneStep: "", eveningBest: "", eveningHardest: "", eveningHandBack: "", eveningPrayer: "" };
       var EMPTY_WEEK = { thankful: "", answers: "", teaching: "", waiting: "", nextWeekPrayer: "" };
       var state = {
@@ -354,6 +354,49 @@
       var sel = parseKey(state.selectedDate);
       state.calCursor = { y: sel.getFullYear(), m: sel.getMonth() };
       state.weekStart = mondayOf(state.selectedDate);
+
+      /* ---- save + load: everything written here is kept on the
+         buyer's own device (localStorage, same origin as this page),
+         so it survives closing the app and coming back. No account,
+         no server, nothing leaves the device. ---- */
+      var STORE_KEY = "dw360-journal-v1";
+      function saveJournal() {
+        try {
+          var data = {
+            v: 1,
+            cycleStart: state.cycleStart,
+            days: state.days,
+            gratitude: state.gratitude,
+            weeks: state.weeks,
+            answered: state.answered,
+            people: state.people,
+            focus: state.focus,
+            notes: state.notes,
+            nextId: state.nextId
+          };
+          localStorage.setItem(STORE_KEY, JSON.stringify(data));
+        } catch (e) { /* private mode / storage full: keep working in memory */ }
+      }
+      function loadJournal() {
+        try {
+          var raw = localStorage.getItem(STORE_KEY);
+          if (!raw) return;
+          var data = JSON.parse(raw);
+          if (!data || typeof data !== "object") return;
+          if (data.cycleStart) state.cycleStart = data.cycleStart;
+          if (data.days) state.days = data.days;
+          if (data.gratitude) state.gratitude = data.gratitude;
+          if (data.weeks) state.weeks = data.weeks;
+          if (Array.isArray(data.answered)) state.answered = data.answered;
+          if (Array.isArray(data.people)) state.people = data.people;
+          if (data.focus) state.focus = Object.assign(state.focus, data.focus);
+          if (typeof data.notes === "string") state.notes = data.notes;
+          var maxId = 0;
+          state.answered.concat(state.people).forEach(function (x) { if (x && x.id > maxId) maxId = x.id; });
+          state.nextId = Math.max(data.nextId || 1, maxId + 1);
+        } catch (e) { /* corrupted or unavailable storage: start fresh */ }
+      }
+      loadJournal();
 
       function dayForm(date) {
         if (!state.days[date]) state.days[date] = Object.assign({}, EMPTY_DAY);
@@ -389,7 +432,7 @@
       }
       function bindField(id, obj, key) {
         var el = document.getElementById(id);
-        if (el) el.addEventListener("input", function () { obj[key] = el.value; });
+        if (el) el.addEventListener("input", function () { obj[key] = el.value; saveJournal(); });
       }
       function sectionShell(title, time, active, inner) {
         return '<section class="card' + (active ? " active" : "") + '" aria-label="' + esc(title) + '">' +
@@ -470,8 +513,9 @@
         /* Keep this day */
         html += '<section class="card" aria-label="Keep this day">' +
           '<div class="sec-title-row"><h2 class="font-journal" style="font-size:1.25rem">Keep This Day</h2></div>' + goldRule() +
-          '<p class="dim-text">Download today&rsquo;s page as a file to keep — your prompt, scripture, thanksgiving, requests, and evening prayer, all in one place.</p>' +
-          '<button type="button" class="cta-btn" id="download-day" style="margin-top:0.75rem">Download this day</button></section>';
+          '<p class="dim-text">Everything you write here saves automatically on this device, so it is still here when you come back. You can also download today&rsquo;s page as a file to keep — your prompt, scripture, thanksgiving, requests, and evening prayer, all in one place.</p>' +
+          '<button type="button" class="cta-btn" id="download-day" style="margin-top:0.75rem">Download this day</button> ' +
+          '<button type="button" class="cta-btn" id="download-backup" style="margin-top:0.75rem">Download a backup of everything</button></section>';
 
         /* 30 prompts */
         html += '<section class="sec" aria-label="The 30 days of prayer prompts">' +
@@ -508,6 +552,18 @@
           });
         });
         document.getElementById("download-day").addEventListener("click", function () { downloadDay(date); });
+        document.getElementById("download-backup").addEventListener("click", function () { downloadBackup(); });
+        saveJournal();
+      }
+
+      function downloadBackup() {
+        saveJournal();
+        var blob = new Blob([localStorage.getItem(STORE_KEY) || "{}"], { type: "application/json" });
+        var a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "daily-word-360-journal-backup.json";
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
       }
 
       function downloadDay(date) {
@@ -587,6 +643,7 @@
           });
         });
         document.getElementById("cal-open").addEventListener("click", function () { pickDate(state.selectedDate, true); });
+        saveJournal();
       }
       function moveCal(delta) {
         var d = new Date(state.calCursor.y, state.calCursor.m + delta, 1);
@@ -650,6 +707,7 @@
         });
         wireAnsweredCards();
         wirePeopleCards();
+        saveJournal();
       }
 
       function removeBtn(kind, id, text) {
@@ -827,6 +885,7 @@
           var g = gratForm(d);
           ["item1", "item2", "item3"].forEach(function (k) { bindField("wg-" + d + "-" + k, g, k); });
         });
+        saveJournal();
       }
 
       /* ============ Focus tab ============ */
@@ -901,7 +960,8 @@
         bindField("fo-work", f, "work");
         bindField("fo-others", f, "others");
         var notesEl = document.getElementById("fo-notes");
-        if (notesEl) notesEl.addEventListener("input", function () { state.notes = notesEl.value; });
+        if (notesEl) notesEl.addEventListener("input", function () { state.notes = notesEl.value; saveJournal(); });
+        saveJournal();
       }
 
       /* ============ shell: header, tabs, clock ============ */
@@ -979,6 +1039,7 @@
         else if (state.tab === "prayers") renderPrayers();
         else if (state.tab === "weekly") renderWeekly();
         else if (state.tab === "focus") renderFocus();
+        saveJournal();
       }
 
       /* Live clock: tick every second; roll the view over at midnight. */

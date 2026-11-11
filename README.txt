@@ -17,4 +17,8 @@ GitHub Pages (free, permanent):
 4. Live at https://<username>.github.io/daily-word-360-journal/
 5. Open that link in Chrome on your phone, three dots -> Install app. Icon should be the gold logo.
 
-This link version does NOT save entries (same as before) — writing lives only while the page is open, plus "Download this day". The saving version is still the card version in Muse.
+Saving (updated 2026-11-11): this link version DOES save entries — everything
+written is kept on the buyer's own device (localStorage), so it is still there
+when they come back. It saves on the device and browser where it is used; it
+does not sync between devices. "Download a backup of everything" in the app
+exports all entries as one JSON file.
