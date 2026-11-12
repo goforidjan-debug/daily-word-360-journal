@@ -288,7 +288,7 @@
         <button type="button" class="track-name" id="music-track-name" title="Tap to change track">Music while you pray</button>
         <input type="range" id="music-volume" min="0" max="100" value="40" aria-label="Music volume" />
       </div>
-      <audio id="music-audio" loop preload="none"></audio>
+      <audio id="music-audio" preload="none"></audio>
     </div>
     <div id="print-export" aria-hidden="true"></div>
 
@@ -780,6 +780,9 @@
         nameBtn.addEventListener("click", nextTrack);
         audioEl.addEventListener("error", function () {
           if (audioEl.getAttribute("src")) nameBtn.textContent = "Music not available right now";
+        });
+        audioEl.addEventListener("ended", function () {
+          loadTrack((state.settings.musicTrack || 0) + 1, true);
         });
         loadTrack(state.settings.musicTrack || 0, false);
         bar.hidden = false;
