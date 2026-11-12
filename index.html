@@ -186,14 +186,16 @@
       .cal-dow { padding: 0.25rem 0; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--header-dim); }
       .cal-cell {
         position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
-        min-height: 2.75rem; padding: 0.25rem 0; border-radius: var(--radius);
+        min-height: 3rem; padding: 0.25rem 0; border-radius: var(--radius);
         border: 1px solid transparent; color: var(--header-text); font-size: 1rem;
         background: rgba(255, 253, 247, 0.07);
       }
       .cal-cell.out { opacity: 0.45; }
       .cal-cell.sel { border-color: var(--gold); background: rgba(255, 253, 247, 0.2); }
       .cal-cell .today-num { font-weight: 700; color: var(--gold); }
-      .cal-dot { margin-top: 2px; width: 6px; height: 6px; border-radius: 999px; background: var(--gold); }
+      .cal-cell.written { background: rgba(185, 151, 91, 0.32); border-color: rgba(185, 151, 91, 0.55); }
+      .cal-cell.written.sel { background: rgba(185, 151, 91, 0.45); }
+      .cal-prayed { margin-top: 1px; font-size: 0.5rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); line-height: 1; }
 
       /* Tracker cards */
       .item-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; margin-bottom: 0.75rem; }
@@ -612,6 +614,7 @@
           '<button type="button" class="pill-btn on-dark" id="cal-prev" aria-label="Previous month">&#8249;</button>' +
           '<h2 class="font-journal">' + esc(formatMonthYear(cur.y, cur.m)) + "</h2>" +
           '<button type="button" class="pill-btn on-dark" id="cal-next" aria-label="Next month">&#8250;</button></div>';
+        html += '<p class="dim-text" style="margin:0.5rem 0 0">Days shaded gold and marked PRAYED are days you wrote in — tap any date, then "Open this day", to read it again.</p>';
         html += '<div class="cal-grid">' +
           ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(function (d) { return '<div class="cal-dow">' + d + "</div>"; }).join("") +
           cells.map(function (k) {
@@ -619,9 +622,9 @@
             var inMonth = d.getMonth() === cur.m;
             var isSel = k === state.selectedDate;
             var isToday = k === today;
-            return '<button type="button" class="cal-cell' + (inMonth ? "" : " out") + (isSel ? " sel" : "") + '" data-date="' + k + '" aria-label="' + esc(formatLong(k)) + (hasWriting(k) ? " — has writing" : "") + '" aria-pressed="' + isSel + '">' +
+            return '<button type="button" class="cal-cell' + (inMonth ? "" : " out") + (isSel ? " sel" : "") + (hasWriting(k) ? " written" : "") + '" data-date="' + k + '" aria-label="' + esc(formatLong(k)) + (hasWriting(k) ? " — prayed" : "") + '" aria-pressed="' + isSel + '">' +
               '<span class="' + (isToday ? "today-num" : "") + '">' + d.getDate() + "</span>" +
-              (hasWriting(k) ? '<span class="cal-dot" aria-hidden="true"></span>' : "") + "</button>";
+              (hasWriting(k) ? '<span class="cal-prayed" aria-hidden="true">Prayed</span>' : "") + "</button>";
           }).join("") + "</div>";
 
         html += '<section class="card" style="margin-top:1.25rem" aria-label="Selected day summary">' + label(formatShort(state.selectedDate)) +
