@@ -75,7 +75,7 @@
       input, textarea { font: inherit; }
       .font-journal { font-family: Georgia, "Times New Roman", serif; }
 
-      .wrap { max-width: 42rem; margin: 0 auto; padding: 1rem 1rem 7rem; }
+      .wrap { max-width: 42rem; margin: 0 auto; padding: 1rem 1rem 11rem; }
 
       /* Header */
       .hdr { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; padding-bottom: 0.5rem; }
@@ -197,6 +197,35 @@
       .cal-cell.written.sel { background: rgba(185, 151, 91, 0.45); }
       .cal-prayed { margin-top: 1px; font-size: 0.5rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); line-height: 1; }
 
+      /* New features: verse hero, streak, timer, PIN, cards, music, export */
+      .verse-hero { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1rem; margin-bottom: 1.25rem; text-align: center; }
+      .verse-hero blockquote { margin: 0; font-size: 1.5rem; line-height: 1.45; color: var(--accent); font-style: italic; }
+      .verse-hero figcaption { margin-top: 0.75rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--gold-deep); }
+      .streak-bar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.25rem 0.75rem; margin-bottom: 1rem; }
+      .streak-pill { background: rgba(185, 151, 91, 0.25); border: 1px solid rgba(185, 151, 91, 0.6); color: var(--header-text); border-radius: 999px; padding: 0.25rem 0.75rem; font-size: 0.875rem; font-weight: 600; white-space: nowrap; }
+      .streak-nudge { font-size: 0.875rem; color: var(--header-dim); margin: 0; }
+      .timer-display { font-size: 2.5rem; line-height: 1.1; text-align: center; color: var(--accent); margin: 0.5rem 0; font-variant-numeric: tabular-nums; }
+      .timer-row { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; margin-top: 0.75rem; }
+      .pin-input { width: 10rem; text-align: center; font-size: 1.25rem; letter-spacing: 0.4em; }
+      .lock-shake { animation: lock-shake 0.3s; }
+      @keyframes lock-shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+      #lock-screen { position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; padding: 2rem; background-color: #0e2417; background-image: var(--silk-bg); color: var(--header-text); text-align: center; }
+      #lock-screen input { width: 10rem; text-align: center; font-size: 1.5rem; letter-spacing: 0.5em; padding: 0.5rem; border-radius: var(--radius); border: 1px solid var(--gold); background: var(--surface); color: var(--text); }
+      .music-bar { position: fixed; left: 0; right: 0; z-index: 9; background: var(--surface); border-top: 1px solid var(--border); }
+      .music-bar .inner { max-width: 42rem; margin: 0 auto; display: flex; align-items: center; gap: 0.5rem; padding: 0.375rem 0.75rem; }
+      .music-bar .track-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.875rem; color: var(--text); background: none; border: none; text-align: left; padding: 0; }
+      .music-btn { border: 1px solid var(--border); border-radius: 999px; width: 2.25rem; height: 2.25rem; min-height: 2.25rem; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: var(--accent); background: var(--surface); flex: none; padding: 0; }
+      .music-bar input[type="range"] { width: 4.5rem; flex: none; accent-color: var(--accent); }
+      .modal { position: fixed; inset: 0; z-index: 60; background: rgba(8, 26, 16, 0.88); display: flex; align-items: center; justify-content: center; padding: 1rem; }
+      .modal .modal-card { background: var(--surface); border-radius: var(--radius); padding: 1rem; max-width: 30rem; width: 100%; text-align: center; max-height: 92vh; overflow-y: auto; }
+      .modal img { width: 100%; border-radius: 8px; display: block; }
+      #print-export { display: none; }
+      body.printing #print-export { display: block; }
+      @media print {
+        body.printing header, body.printing #view, body.printing nav.tabs, body.printing .music-bar, body.printing #lock-screen { display: none !important; }
+        body.printing #print-export { display: block !important; }
+      }
+
       /* Tracker cards */
       .item-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; margin-bottom: 0.75rem; }
       .item-card .big { font-size: 1.125rem; line-height: 1.55; color: var(--text); margin: 0; }
@@ -252,6 +281,17 @@
       <div class="inner" id="tabbar"></div>
     </nav>
 
+    <div class="music-bar" id="music-bar" hidden>
+      <div class="inner">
+        <button type="button" class="music-btn" id="music-play" aria-label="Play music">&#9654;</button>
+        <button type="button" class="music-btn" id="music-next" aria-label="Next track">&#187;</button>
+        <button type="button" class="track-name" id="music-track-name" title="Tap to change track">Music while you pray</button>
+        <input type="range" id="music-volume" min="0" max="100" value="40" aria-label="Music volume" />
+      </div>
+      <audio id="music-audio" loop preload="none"></audio>
+    </div>
+    <div id="print-export" aria-hidden="true"></div>
+
     <script>
       "use strict";
       /* ============ content: verbatim from the printed journal ============ */
@@ -263,6 +303,12 @@
         { text: "Rejoice always, pray continually, give thanks in all circumstances; for this is God's will for you in Christ Jesus.", ref: "1 Thessalonians 5:16-18", use: "for gratitude" }
       ];
       var EVENING_VERSE = VERSES[3];
+      /* Godwin's own calm instrumental tracks, played while you pray. */
+      var MUSIC_TRACKS = [
+        { title: "Linen and Light", file: "music/Linen_and_Light.mp3" },
+        { title: "Before The Sun Returns", file: "music/Before_The_Sun_Returns.mp3" },
+        { title: "Where The Light Rests", file: "music/Where_The_Light_Rests.mp3" }
+      ];
       var PROMPTS = [
         "Thank God for one good thing about today",
         "Pray for your family's health",
@@ -351,7 +397,8 @@
         notes: "",
         calCursor: null, // {y, m}
         weekStart: null,
-        nextId: 1
+        nextId: 1,
+        settings: { pinHash: null, musicTrack: 0, musicVolume: 40 }
       };
       var sel = parseKey(state.selectedDate);
       state.calCursor = { y: sel.getFullYear(), m: sel.getMonth() };
@@ -374,7 +421,8 @@
             people: state.people,
             focus: state.focus,
             notes: state.notes,
-            nextId: state.nextId
+            nextId: state.nextId,
+            settings: state.settings
           };
           localStorage.setItem(STORE_KEY, JSON.stringify(data));
         } catch (e) { /* private mode / storage full: keep working in memory */ }
@@ -393,6 +441,7 @@
           if (Array.isArray(data.people)) state.people = data.people;
           if (data.focus) state.focus = Object.assign(state.focus, data.focus);
           if (typeof data.notes === "string") state.notes = data.notes;
+          if (data.settings) state.settings = Object.assign({ pinHash: null, musicTrack: 0, musicVolume: 40 }, data.settings);
           var maxId = 0;
           state.answered.concat(state.people).forEach(function (x) { if (x && x.id > maxId) maxId = x.id; });
           state.nextId = Math.max(data.nextId || 1, maxId + 1);
@@ -418,6 +467,321 @@
         var g = state.gratitude[date];
         if (g && (g.item1 || g.item2 || g.item3)) return true;
         return false;
+      }
+
+      /* ============ new features: streak, timer, PIN, cards, music, export ============ */
+      function prayerStreak() {
+        var count = 0;
+        var d = todayKey();
+        if (!hasWriting(d)) d = addDays(d, -1);
+        while (hasWriting(d)) { count++; d = addDays(d, -1); }
+        return count;
+      }
+
+      /* ---- prayer timer (module-level so it survives re-renders) ---- */
+      var timerTotal = 600, timerLeft = 600, timerRunning = false, timerInt = null;
+      function timerText(s) { var m = Math.floor(s / 60), r = s % 60; return m + ":" + (r < 10 ? "0" : "") + r; }
+      function updateTimerDisplay() {
+        var el = document.getElementById("timer-display");
+        if (el) el.textContent = timerText(timerLeft);
+        var btn = document.getElementById("timer-start");
+        if (btn) btn.textContent = timerRunning ? "Pause" : (timerLeft < timerTotal ? "Resume" : "Start");
+      }
+      function timerTick() {
+        if (timerLeft > 0) {
+          timerLeft--;
+          updateTimerDisplay();
+          if (timerLeft === 0) { stopTimer(); chime(); }
+        }
+      }
+      function startTimer() {
+        if (timerRunning) return;
+        if (timerLeft <= 0) timerLeft = timerTotal;
+        timerRunning = true;
+        timerInt = setInterval(timerTick, 1000);
+        updateTimerDisplay();
+      }
+      function stopTimer() {
+        timerRunning = false;
+        if (timerInt) { clearInterval(timerInt); timerInt = null; }
+        updateTimerDisplay();
+      }
+      function chime() {
+        try {
+          var AC = window.AudioContext || window.webkitAudioContext;
+          var ctx = new AC();
+          [523.25, 783.99].forEach(function (freq, i) {
+            var o = ctx.createOscillator(), g = ctx.createGain();
+            var t0 = ctx.currentTime + i * 0.7;
+            o.frequency.value = freq; o.type = "sine";
+            g.gain.setValueAtTime(0.0001, t0);
+            g.gain.exponentialRampToValueAtTime(0.12, t0 + 0.05);
+            g.gain.exponentialRampToValueAtTime(0.0001, t0 + 1.4);
+            o.connect(g); g.connect(ctx.destination);
+            o.start(t0); o.stop(t0 + 1.5);
+          });
+        } catch (e) { /* no audio support: the timer still ends silently */ }
+      }
+
+      /* ---- PIN lock (a privacy screen, not encryption: it keeps casual
+         eyes out. The PIN lives only on this phone, as a hash.) ---- */
+      var sessionUnlocked = false;
+      var pinNotice = "";
+      function pinHash(pin) {
+        var h = 5381, str = "dw360-pin:" + pin;
+        for (var i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) >>> 0;
+        return String(h);
+      }
+      function showLockScreen() {
+        if (sessionUnlocked || !state.settings.pinHash) return;
+        if (document.getElementById("lock-screen")) return;
+        var ov = document.createElement("div");
+        ov.id = "lock-screen";
+        ov.innerHTML = '<h2 class="font-journal" style="font-size:1.5rem;margin:0">Daily Word 360 Journal</h2>' +
+          '<p style="margin:0;color:var(--header-dim)">This journal is locked. Enter your 4-digit PIN.</p>' +
+          '<input type="password" id="pin-input" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" aria-label="4-digit PIN" />' +
+          '<button type="button" class="cta-btn" id="pin-unlock">Unlock</button>' +
+          '<p id="pin-error" class="small-dim" style="color:#f0b4ae" hidden>Wrong PIN — try again.</p>' +
+          '<button type="button" class="link-btn" id="pin-forgot" style="color:var(--header-dim)">Forgot PIN?</button>';
+        document.body.appendChild(ov);
+        var input = document.getElementById("pin-input");
+        function tryUnlock() {
+          if (pinHash(input.value) === state.settings.pinHash) {
+            sessionUnlocked = true;
+            ov.remove();
+          } else {
+            var err = document.getElementById("pin-error");
+            if (err) err.hidden = false;
+            ov.classList.remove("lock-shake");
+            void ov.offsetWidth;
+            ov.classList.add("lock-shake");
+            input.value = "";
+            input.focus();
+          }
+        }
+        document.getElementById("pin-unlock").addEventListener("click", tryUnlock);
+        input.addEventListener("input", function () { if (input.value.length === 4) tryUnlock(); });
+        input.addEventListener("keydown", function (e) { if (e.key === "Enter") tryUnlock(); });
+        document.getElementById("pin-forgot").addEventListener("click", function () {
+          if (!window.confirm("Forgot your PIN? The only way back in is to reset the app — everything you have written will be erased, unless you have a backup download. Reset the app?")) return;
+          if (!window.confirm("This really erases all your journal entries on this phone. Are you sure?")) return;
+          try { localStorage.removeItem(STORE_KEY); } catch (e) {}
+          location.reload();
+        });
+        input.focus();
+      }
+      function lockApp() { sessionUnlocked = false; showLockScreen(); }
+
+      /* ---- shareable prayer cards (1080x1350 canvas) ---- */
+      function wrapCanvasText(ctx, text, maxWidth) {
+        var words = String(text).split(/\s+/);
+        var lines = [], line = "";
+        words.forEach(function (w) {
+          var t = line ? line + " " + w : w;
+          if (ctx.measureText(t).width > maxWidth && line) { lines.push(line); line = w; }
+          else line = t;
+        });
+        if (line) lines.push(line);
+        return lines;
+      }
+      function drawPrayerCard(opts) {
+        var W = 1080, H = 1350;
+        var cv = document.createElement("canvas");
+        cv.width = W; cv.height = H;
+        var ctx = cv.getContext("2d");
+        var g = ctx.createLinearGradient(0, 0, 0, H);
+        g.addColorStop(0, "#20503a"); g.addColorStop(0.55, "#143527"); g.addColorStop(1, "#081a10");
+        ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+        ctx.strokeStyle = "#b9975b"; ctx.lineWidth = 4; ctx.strokeRect(48, 48, W - 96, H - 96);
+        ctx.lineWidth = 1.5; ctx.strokeRect(64, 64, W - 128, H - 128);
+        ctx.textAlign = "center";
+        var logo = document.querySelector(".logo-shine img");
+        var y = 170;
+        if (logo && logo.complete && logo.naturalWidth) {
+          try { ctx.drawImage(logo, W / 2 - 60, 110, 120, 120); y = 270; } catch (e) {}
+        }
+        ctx.fillStyle = "#b9975b";
+        ctx.font = "700 34px Georgia, serif";
+        ctx.fillText("D A I L Y   W O R D   3 6 0", W / 2, y + 10);
+        var size = 64, lines = [];
+        while (size >= 38) {
+          ctx.font = (opts.italic ? "italic " : "") + size + "px Georgia, serif";
+          lines = wrapCanvasText(ctx, opts.body, W - 220);
+          if (lines.length <= 8) break;
+          size -= 6;
+        }
+        ctx.fillStyle = "#f3eedd";
+        var lh = Math.round(size * 1.45);
+        var startY = 560 - ((lines.length - 1) * lh) / 2;
+        lines.forEach(function (ln, i) { ctx.fillText(ln, W / 2, startY + i * lh); });
+        var refY = startY + lines.length * lh + 60;
+        ctx.fillStyle = "#b9975b";
+        ctx.font = "700 34px Georgia, serif";
+        ctx.fillText(opts.ref, W / 2, refY);
+        ctx.font = "28px Georgia, serif";
+        ctx.fillStyle = "#c3cdb9";
+        ctx.fillText("30-Day Prayer Journal", W / 2, H - 150);
+        ctx.fillText("dailyverse.gumroad.com/l/hfuap", W / 2, H - 105);
+        return cv;
+      }
+      function showCardModal(dataUrl, filename) {
+        closeCardModal();
+        var ov = document.createElement("div");
+        ov.className = "modal"; ov.id = "card-modal";
+        ov.innerHTML = '<div class="modal-card"><img alt="Prayer card preview" src="' + dataUrl + '" />' +
+          '<div class="timer-row"><button type="button" class="cta-btn" id="card-share">Share</button>' +
+          '<button type="button" class="cta-btn" id="card-download">Download image</button>' +
+          '<button type="button" class="link-btn dim" id="card-close">Close</button></div></div>';
+        document.body.appendChild(ov);
+        function download() {
+          var a = document.createElement("a");
+          a.href = dataUrl; a.download = filename;
+          document.body.appendChild(a); a.click(); a.remove();
+        }
+        document.getElementById("card-download").addEventListener("click", download);
+        document.getElementById("card-close").addEventListener("click", closeCardModal);
+        ov.addEventListener("click", function (e) { if (e.target === ov) closeCardModal(); });
+        document.getElementById("card-share").addEventListener("click", function () {
+          fetch(dataUrl).then(function (r) { return r.blob(); }).then(function (blob) {
+            var file = new File([blob], filename, { type: "image/png" });
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+              return navigator.share({ files: [file] });
+            }
+            download();
+          }).catch(download);
+        });
+      }
+      function closeCardModal() { var m = document.getElementById("card-modal"); if (m) m.remove(); }
+      function shareVerseCard(date) {
+        var di = dayIndexOfYear(date);
+        var form = dayForm(date);
+        var v = VERSES.find(function (x) { return x.ref === form.verseRef; }) || VERSES[di % VERSES.length];
+        var cv = drawPrayerCard({ body: "\u201C" + v.text + "\u201D", ref: v.ref + " (NIV)", italic: true });
+        showCardModal(cv.toDataURL("image/png"), "daily-word-360-verse-card.png");
+      }
+      function sharePrayerCard(date) {
+        var form = dayForm(date);
+        var text = form.eveningPrayer || form.thanksgiving;
+        if (!text) return;
+        var cv = drawPrayerCard({ body: text, ref: "My prayer — " + formatShort(date), italic: false });
+        showCardModal(cv.toDataURL("image/png"), "daily-word-360-prayer-card.png");
+      }
+
+      /* ---- export: your 30 days as a keepsake PDF (via print) ---- */
+      function buildExportHTML() {
+        var parts = [];
+        parts.push('<div style="max-width:42rem;margin:0 auto;font-family:Georgia,serif;color:#26332c">' +
+          '<h1 style="text-align:center;font-size:1.75rem;margin:0">My 30 Days of Prayer</h1>' +
+          '<p style="text-align:center;color:#5c6b61">Daily Word 360 Journal</p><hr style="width:52px;border:none;border-top:2px solid #b9975b;margin:0.75rem auto" />');
+        var keys = Object.keys(state.days).sort();
+        var anyDay = false;
+        keys.forEach(function (k) {
+          if (!hasWriting(k)) return;
+          anyDay = true;
+          var form = state.days[k];
+          var grat = state.gratitude[k] || {};
+          var cd = state.cycleStart ? cycleDayFor(k, state.cycleStart) : null;
+          var di = dayIndexOfYear(k);
+          var v = VERSES.find(function (x) { return x.ref === form.verseRef; }) || VERSES[di % VERSES.length];
+          parts.push('<h2 style="font-size:1.25rem;margin:1.25rem 0 0.25rem">' + esc(formatLong(k)) + (cd != null ? " — Day " + cd + " of 30" : "") + "</h2>");
+          if (cd != null) parts.push("<p><i>" + esc(PROMPTS[cd - 1]) + "</i></p>");
+          parts.push('<p><i>&ldquo;' + esc(v.text) + "&rdquo; — " + esc(v.ref) + " (NIV)</i></p>");
+          function add(lab, val) { if (val) parts.push("<p><b>" + esc(lab) + ":</b><br>" + esc(val).replace(/\n/g, "<br>") + "</p>"); }
+          add("Lord, today I thank You for", form.thanksgiving);
+          add("I bring these requests to You", form.requests);
+          add("People on my heart today", form.peopleOnHeart);
+          add("Listening — what I sense God saying", form.listening);
+          add("One step I will take today", form.oneStep);
+          var gl = [grat.item1, grat.item2, grat.item3].filter(Boolean);
+          if (gl.length) parts.push("<p><b>Three things I am grateful for:</b><br>" + gl.map(esc).join("<br>") + "</p>");
+          add("The best moment of today", form.eveningBest);
+          add("The hardest moment of today", form.eveningHardest);
+          add("Tonight I hand back to You", form.eveningHandBack);
+          if (form.eveningPrayer) parts.push("<p><b>My prayer tonight:</b><br>Heavenly Father,<br>" + esc(form.eveningPrayer).replace(/\n/g, "<br>") + "<br>Amen.</p>");
+        });
+        if (!anyDay) parts.push("<p>Nothing written yet — your prayers will gather here as you write them.</p>");
+        if (state.answered.length) {
+          parts.push("<h2>Answered Prayers</h2>");
+          state.answered.forEach(function (p) {
+            parts.push("<p><b>" + esc(p.prayer) + "</b><br>Prayed " + esc(formatShort(p.datePrayed)) + (p.dateAnswered ? " — Answered " + esc(formatShort(p.dateAnswered)) + (p.howAnswered ? ": " + esc(p.howAnswered) : "") : "") + "</p>");
+          });
+        }
+        if (state.people.length) {
+          parts.push("<h2>People I Am Praying For</h2>");
+          state.people.forEach(function (p) {
+            parts.push("<p><b>" + esc(p.name) + "</b>" + (p.request ? " — " + esc(p.request) : "") + "<br>Praying since " + esc(formatShort(p.sinceDate)) + "</p>");
+          });
+        }
+        parts.push("<p><i>" + esc(CLOSING_BLESSING) + "</i><br>" + esc(CLOSING_REF) + "</p></div>");
+        return parts.join("");
+      }
+      function exportJournal() {
+        var ex = document.getElementById("print-export");
+        if (!ex) return;
+        ex.innerHTML = buildExportHTML();
+        document.body.classList.add("printing");
+        window.print();
+      }
+      window.addEventListener("afterprint", function () { document.body.classList.remove("printing"); });
+
+      /* ---- music while you pray ---- */
+      function wireMusicBar() {
+        var bar = document.getElementById("music-bar");
+        var audioEl = document.getElementById("music-audio");
+        var playBtn = document.getElementById("music-play");
+        var nextBtn = document.getElementById("music-next");
+        var nameBtn = document.getElementById("music-track-name");
+        var vol = document.getElementById("music-volume");
+        if (!bar || !audioEl) return;
+        function positionBar() {
+          var nav = document.querySelector("nav.tabs");
+          var h = nav ? nav.offsetHeight : 48;
+          bar.style.bottom = h + "px";
+        }
+        function loadTrack(i, autoplay) {
+          var n = MUSIC_TRACKS.length;
+          var idx = ((i % n) + n) % n;
+          state.settings.musicTrack = idx;
+          audioEl.src = MUSIC_TRACKS[idx].file;
+          nameBtn.textContent = MUSIC_TRACKS[idx].title;
+          saveJournal();
+          if (autoplay) playAudio();
+        }
+        function playAudio() {
+          var p = audioEl.play();
+          if (p && p.catch) p.catch(function () { /* browsers need a gesture: tap play again */ });
+          playBtn.innerHTML = "&#10074;&#10074;";
+          playBtn.setAttribute("aria-label", "Pause music");
+        }
+        function pauseAudio() {
+          audioEl.pause();
+          playBtn.innerHTML = "&#9654;";
+          playBtn.setAttribute("aria-label", "Play music");
+        }
+        audioEl.volume = (state.settings.musicVolume || 40) / 100;
+        vol.value = state.settings.musicVolume || 40;
+        vol.addEventListener("input", function () {
+          state.settings.musicVolume = Number(vol.value);
+          audioEl.volume = Number(vol.value) / 100;
+          saveJournal();
+        });
+        playBtn.addEventListener("click", function () {
+          if (audioEl.paused) { if (!audioEl.getAttribute("src")) loadTrack(state.settings.musicTrack || 0, false); playAudio(); }
+          else pauseAudio();
+        });
+        function nextTrack() {
+          var wasPlaying = !audioEl.paused;
+          loadTrack((state.settings.musicTrack || 0) + 1, wasPlaying);
+        }
+        nextBtn.addEventListener("click", nextTrack);
+        nameBtn.addEventListener("click", nextTrack);
+        audioEl.addEventListener("error", function () {
+          if (audioEl.getAttribute("src")) nameBtn.textContent = "Music not available right now";
+        });
+        loadTrack(state.settings.musicTrack || 0, false);
+        bar.hidden = false;
+        positionBar();
+        window.addEventListener("resize", positionBar);
       }
 
       /* ============ shared builders ============ */
@@ -461,6 +825,14 @@
         var grat = gratForm(date);
 
         var html = "";
+
+        var streak = prayerStreak();
+        var nudge = hasWriting(todayKey()) ? "Today is written. Well done — come back this evening." : "You have not written today yet — a quiet moment is waiting.";
+        html += '<div class="streak-bar"><span class="streak-pill">' + (streak > 0 ? streak + (streak === 1 ? " day" : " days") + " in a row" : "Start your streak today") + '</span><p class="streak-nudge">' + esc(nudge) + "</p></div>";
+        html += '<section class="verse-hero" aria-label="Today&rsquo;s verse"><p class="label" style="text-align:center">Today&rsquo;s verse</p>' +
+          '<blockquote class="font-journal">&ldquo;' + esc(chosen.text) + '&rdquo;</blockquote>' +
+          '<figcaption>' + esc(chosen.ref) + ' (NIV)</figcaption>' +
+          '<div class="timer-row"><button type="button" class="cta-btn" id="share-verse-card">Share this verse</button></div></section>';
 
         if (!state.cycleStart && isToday) {
           html += '<section class="card begin-banner" aria-label="Begin the 30-day journey">' + label("Begin the 30-day journey") +
@@ -512,12 +884,24 @@
         evening += verseBlock(EVENING_VERSE, EVENING_VERSE.use);
         html += sectionShell("Evening Prayer", "7:00 PM", isToday && phase === "evening", evening);
 
+        /* Prayer timer */
+        html += '<section class="card" aria-label="Prayer timer"><div class="sec-title-row"><h2 class="font-journal" style="font-size:1.25rem">Prayer Timer</h2></div>' + goldRule() +
+          '<p class="dim-text">Settle in, press start, and give God these minutes. A soft chime will tell you when the time is done.</p>' +
+          '<p class="timer-display font-journal" id="timer-display">' + timerText(timerLeft) + '</p>' +
+          '<div class="chips" style="justify-content:center">' + [5, 10, 15].map(function (m) {
+            return '<button type="button" class="chip' + (timerTotal === m * 60 ? " sel" : "") + '" data-timer-min="' + m + '">' + m + " min</button>";
+          }).join("") + "</div>" +
+          '<div class="timer-row"><button type="button" class="cta-btn" id="timer-start">Start</button>' +
+          '<button type="button" class="cta-btn" id="timer-reset">Reset</button></div></section>';
+
         /* Keep this day */
         html += '<section class="card" aria-label="Keep this day">' +
           '<div class="sec-title-row"><h2 class="font-journal" style="font-size:1.25rem">Keep This Day</h2></div>' + goldRule() +
           '<p class="dim-text">Everything you write here saves automatically on this device, so it is still here when you come back. You can also download today&rsquo;s page as a file to keep — your prompt, scripture, thanksgiving, requests, and evening prayer, all in one place.</p>' +
           '<button type="button" class="cta-btn" id="download-day" style="margin-top:0.75rem">Download this day</button> ' +
-          '<button type="button" class="cta-btn" id="download-backup" style="margin-top:0.75rem">Download a backup of everything</button></section>';
+          '<button type="button" class="cta-btn" id="download-backup" style="margin-top:0.75rem">Download a backup of everything</button> ' +
+          '<button type="button" class="cta-btn" id="share-prayer-card" style="margin-top:0.75rem"' + ((form.eveningPrayer || form.thanksgiving) ? "" : " disabled") + '>Share today&rsquo;s prayer</button> ' +
+          '<button type="button" class="cta-btn" id="export-journal" style="margin-top:0.75rem">Export my 30 days (PDF)</button></section>';
 
         /* 30 prompts */
         html += '<section class="sec" aria-label="The 30 days of prayer prompts">' +
@@ -555,6 +939,24 @@
         });
         document.getElementById("download-day").addEventListener("click", function () { downloadDay(date); });
         document.getElementById("download-backup").addEventListener("click", function () { downloadBackup(); });
+        document.getElementById("share-verse-card").addEventListener("click", function () { shareVerseCard(date); });
+        document.getElementById("share-prayer-card").addEventListener("click", function () { sharePrayerCard(date); });
+        document.getElementById("export-journal").addEventListener("click", function () { exportJournal(); });
+        view.querySelectorAll("[data-timer-min]").forEach(function (b) {
+          b.addEventListener("click", function () {
+            stopTimer();
+            timerTotal = Number(b.getAttribute("data-timer-min")) * 60;
+            timerLeft = timerTotal;
+            renderToday();
+          });
+        });
+        document.getElementById("timer-start").addEventListener("click", function () {
+          if (timerRunning) stopTimer(); else startTimer();
+        });
+        document.getElementById("timer-reset").addEventListener("click", function () {
+          stopTimer(); timerLeft = timerTotal; renderToday();
+        });
+        updateTimerDisplay();
         saveJournal();
       }
 
@@ -923,7 +1325,24 @@
           "</div></div>" +
           '<div style="margin-top:1rem">' + verseBlock(VERSES[2], VERSES[2].use) + "</div></section>";
 
-        html += '<section class="sec" aria-label="When you do not know what to pray">' +
+        html += '<section class="sec" aria-label="Keep it private">' +
+          '<h3 class="font-journal on-dark-title" style="font-size:1.25rem">Keep It Private</h3>' + goldRule() +
+          '<p class="dim-text on-dark-dim">Your prayers are personal. A 4-digit PIN keeps casual eyes out when someone else picks up your phone. It is a privacy screen, not a lock on a safe — and because everything lives only on this phone, there is no "forgot PIN" email: if you forget the PIN, the only way back in is to reset the app, so keep a backup of your journal first.</p>' +
+          '<div class="form-card"><div class="stack">' +
+          (state.settings.pinHash
+            ? '<p class="body-text">PIN lock is on.</p>' +
+              '<div>' + label("New 4-digit PIN") + '<input type="password" class="journal pin-input" id="pin-new" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" aria-label="New 4-digit PIN" /></div>' +
+              '<div>' + label("Confirm new PIN") + '<input type="password" class="journal pin-input" id="pin-confirm" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" aria-label="Confirm new PIN" /></div>' +
+              '<div class="row-actions"><button type="button" class="cta-btn" id="pin-change">Change PIN</button>' +
+              '<button type="button" class="link-btn" id="pin-off">Turn off PIN lock</button>' +
+              '<button type="button" class="link-btn" id="pin-lock-now">Lock the app now</button></div>'
+            : '<div>' + label("Choose a 4-digit PIN") + '<input type="password" class="journal pin-input" id="pin-new" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" aria-label="Choose a 4-digit PIN" /></div>' +
+              '<div>' + label("Confirm PIN") + '<input type="password" class="journal pin-input" id="pin-confirm" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" aria-label="Confirm PIN" /></div>' +
+              '<div class="row-actions"><button type="button" class="cta-btn" id="pin-set">Turn on PIN lock</button></div>') +
+          '<p class="small-dim" id="pin-msg">' + esc(pinNotice) + '</p>' +
+          "</div></div></section>";
+
+        html += '<section class="sec" aria-label="When you do not know what to pray">';
           '<h3 class="font-journal on-dark-title" style="font-size:1.25rem">When You Do Not Know What to Pray</h3>' + goldRule() +
           '<p class="dim-text on-dark-dim">Some days the words will not come. Borrow these prompts — pick one, pray it in your own words, and let it start the conversation.</p>' +
           '<div class="stack" style="margin-top:0.75rem">' +
@@ -962,6 +1381,36 @@
         bindField("fo-family", f, "family");
         bindField("fo-work", f, "work");
         bindField("fo-others", f, "others");
+        function pinMsg(t) { var m = document.getElementById("pin-msg"); if (m) m.textContent = t; }
+        function readPinPair() {
+          var a = document.getElementById("pin-new"), b = document.getElementById("pin-confirm");
+          if (!a || !b) return null;
+          var x = a.value.trim(), y = b.value.trim();
+          if (!/^\d{4}$/.test(x)) { pinMsg("Enter a 4-digit PIN (numbers only)."); return null; }
+          if (x !== y) { pinMsg("The two PINs do not match — try again."); return null; }
+          return x;
+        }
+        var pinSet = document.getElementById("pin-set");
+        if (pinSet) pinSet.addEventListener("click", function () {
+          var p = readPinPair(); if (!p) return;
+          state.settings.pinHash = pinHash(p); saveJournal();
+          pinNotice = "PIN lock is on. The app will ask for your PIN next time it opens.";
+          renderFocus();
+        });
+        var pinChange = document.getElementById("pin-change");
+        if (pinChange) pinChange.addEventListener("click", function () {
+          var p = readPinPair(); if (!p) return;
+          state.settings.pinHash = pinHash(p); saveJournal();
+          pinNotice = "PIN changed.";
+          renderFocus();
+        });
+        var pinOff = document.getElementById("pin-off");
+        if (pinOff) pinOff.addEventListener("click", function () {
+          if (!window.confirm("Turn off PIN lock? Anyone who opens the app will see your journal.")) return;
+          state.settings.pinHash = null; sessionUnlocked = true; saveJournal(); renderFocus();
+        });
+        var pinLockNow = document.getElementById("pin-lock-now");
+        if (pinLockNow) pinLockNow.addEventListener("click", function () { lockApp(); });
         var notesEl = document.getElementById("fo-notes");
         if (notesEl) notesEl.addEventListener("input", function () { state.notes = notesEl.value; saveJournal(); });
         saveJournal();
@@ -1057,6 +1506,8 @@
       }, 1000);
 
       render();
+      wireMusicBar();
+      if (state.settings.pinHash) showLockScreen();
     </script>
   </body>
 </html>
