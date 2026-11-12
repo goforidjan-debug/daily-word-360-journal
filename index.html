@@ -870,8 +870,7 @@
         html += '<section class="verse-hero" aria-label="Today&rsquo;s verse"><p class="label" style="text-align:center">Today&rsquo;s verse</p>' +
           '<blockquote class="font-journal">&ldquo;' + esc(chosen.text) + '&rdquo;</blockquote>' +
           '<figcaption>' + esc(chosen.ref) + ' (NIV)</figcaption>' +
-          '<div class="timer-row"><button type="button" class="cta-btn" id="share-verse-card">Share this verse</button> ' +
-          '<button type="button" class="cta-btn" id="copy-verse">Copy verse</button></div></section>';
+          '<div class="timer-row"><button type="button" class="cta-btn" id="share-verse-card">Share this verse</button></div></section>';
 
         if (!state.cycleStart && isToday) {
           html += '<section class="card begin-banner" aria-label="Begin the 30-day journey">' + label("Begin the 30-day journey") +
@@ -980,10 +979,6 @@
         document.getElementById("download-day").addEventListener("click", function () { downloadDay(date); });
         document.getElementById("download-backup").addEventListener("click", function () { downloadBackup(); });
         document.getElementById("share-verse-card").addEventListener("click", function () { shareVerseCard(date); });
-        document.getElementById("copy-verse").addEventListener("click", function () {
-          var v = VERSES.find(function (x) { return x.ref === dayForm(date).verseRef; }) || VERSES[dayIndexOfYear(date) % VERSES.length];
-          copyText("\u201C" + v.text + "\u201D — " + v.ref + " (NIV)", this);
-        });
         document.getElementById("share-prayer-card").addEventListener("click", function () { sharePrayerCard(date); });
         document.getElementById("copy-prayer-card").addEventListener("click", function () {
           var text = dayForm(date).eveningPrayer || dayForm(date).thanksgiving;
