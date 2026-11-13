@@ -303,6 +303,48 @@
         { text: "Rejoice always, pray continually, give thanks in all circumstances; for this is God's will for you in Christ Jesus.", ref: "1 Thessalonians 5:16-18", use: "for gratitude" }
       ];
       var EVENING_VERSE = VERSES[3];
+      /* Nature scenes for the shareable verse cards — 20 cinematic scenes,
+         each a different place, mood and light. Sources: the five Christian
+         Live Wallpaper stills (Milky Way, Sunrise Fog, Sunset Mountain,
+         Forest Stream, Golden Field) + the wallpaper candidates (Aurora,
+         Misty Lake, Ocean Dusk, Ep 5 forest path) + one Pexels alpine-lake
+         still + ten generated cinematic stills. Add a scene by dropping its
+         file in scenes/ and adding one entry below — nothing here assumes a
+         fixed count.
+         1 milky-way: Milky Way over a dark mountain ridge
+         2 sunrise-fog: sun rising through fog over a mountain ridge
+         3 sunset-mountain: sunset over a rocky mountain ridge
+         4 forest-stream: forest stream among mossy rocks
+         5 golden-field: golden field under a warm sky
+         6 aurora: green and violet aurora over a snowy lake
+         7 misty-lake: foggy lake at dawn, golden sun through the pines
+         8 ocean-dusk: rocky coastline at dusk, waves and sea mist
+         9 forest-path-dusk: quiet forest path at dusk, golden light through the trees
+         10 alpine-lake: turquoise alpine lake beneath snowy peaks
+         11 misty-pines: tall pines fading into morning fog
+         12 desert-dunes: desert dunes at dusk, amber sand and a purple sky
+         13 jungle-waterfall: waterfall in a dark jungle canyon
+         14 snowy-valley: snowy mountain valley by moonlight
+         15 lavender-field: lavender rows at dusk under a violet sky
+         16 autumn-pond: still pond in an autumn maple forest
+         17 rainy-valley: rain falling over a green valley
+         18 canyon-river: river winding through red rock canyon at golden hour
+         19 cherry-pond: cherry blossom over a still pond at dusk
+         20 country-lane: misty country lane at blue hour */
+      var VERSE_SCENES = ["scenes/milky-way.jpg", "scenes/sunrise-fog.jpg", "scenes/sunset-mountain.jpg", "scenes/forest-stream.jpg", "scenes/golden-field.jpg", "scenes/aurora.jpg", "scenes/misty-lake.jpg", "scenes/ocean-dusk.jpg", "scenes/forest-path-dusk.jpg", "scenes/alpine-lake.jpg", "scenes/misty-pines.jpg", "scenes/desert-dunes.jpg", "scenes/jungle-waterfall.jpg", "scenes/snowy-valley.jpg", "scenes/lavender-field.jpg", "scenes/autumn-pond.jpg", "scenes/rainy-valley.jpg", "scenes/canyon-river.jpg", "scenes/cherry-pond.jpg", "scenes/country-lane.jpg"];
+      var VERSE_SCENE_BY_REF = {
+        "Psalm 91:1": "scenes/forest-stream.jpg",
+        "Matthew 11:28": "scenes/sunrise-fog.jpg",
+        "Philippians 4:6": "scenes/sunset-mountain.jpg",
+        "Psalm 4:8": "scenes/milky-way.jpg",
+        "1 Thessalonians 5:16-18": "scenes/golden-field.jpg"
+      };
+      function pickVerseScene(ref) {
+        if (VERSE_SCENE_BY_REF[ref]) return VERSE_SCENE_BY_REF[ref];
+        var h = 0;
+        for (var i = 0; i < ref.length; i++) h = (h * 31 + ref.charCodeAt(i)) >>> 0;
+        return VERSE_SCENES[h % VERSE_SCENES.length];
+      }
       /* Godwin's own calm instrumental tracks, played while you pray. */
       var MUSIC_TRACKS = [
         { title: "Linen and Light", file: "music/Linen_and_Light.mp3" },
@@ -633,6 +675,79 @@
         ctx.fillText("dailyverse.gumroad.com/l/hfuap", W / 2, H - 105);
         return cv;
       }
+      /* ---- shareable VERSE cards (1080x1350 canvas, nature scene) ----
+         Same layout as the prayer card, but the background is a beautiful
+         nature scene instead of the green gradient. Prayer cards keep
+         drawPrayerCard exactly as it was. */
+      function drawVerseCard(opts, img) {
+        var W = 1080, H = 1350;
+        var cv = document.createElement("canvas");
+        cv.width = W; cv.height = H;
+        var ctx = cv.getContext("2d");
+        if (img && img.complete && img.naturalWidth) {
+          var s = Math.max(W / img.naturalWidth, H / img.naturalHeight);
+          var dw = img.naturalWidth * s, dh = img.naturalHeight * s;
+          ctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
+        } else {
+          var g0 = ctx.createLinearGradient(0, 0, 0, H);
+          g0.addColorStop(0, "#20503a"); g0.addColorStop(0.55, "#143527"); g0.addColorStop(1, "#081a10");
+          ctx.fillStyle = g0; ctx.fillRect(0, 0, W, H);
+        }
+        /* gentle overall dim, plus a darker veil at the bottom behind the footer */
+        ctx.fillStyle = "rgba(0,0,0,0.22)"; ctx.fillRect(0, 0, W, H);
+        var bv = ctx.createLinearGradient(0, H - 240, 0, H);
+        bv.addColorStop(0, "rgba(0,0,0,0)"); bv.addColorStop(1, "rgba(0,0,0,0.45)");
+        ctx.fillStyle = bv; ctx.fillRect(0, H - 240, W, 240);
+        ctx.strokeStyle = "#b9975b"; ctx.lineWidth = 4; ctx.strokeRect(48, 48, W - 96, H - 96);
+        ctx.lineWidth = 1.5; ctx.strokeRect(64, 64, W - 128, H - 128);
+        ctx.textAlign = "center";
+        var logo = document.querySelector(".logo-shine img");
+        var y = 170;
+        if (logo && logo.complete && logo.naturalWidth) {
+          try { ctx.drawImage(logo, W / 2 - 60, 110, 120, 120); y = 270; } catch (e) {}
+        }
+        /* gold header with a dark shadow, so it stays readable even where
+           the scene behind it is bright (sun, pale rock, orange cloud) */
+        ctx.fillStyle = "#b9975b";
+        ctx.font = "700 34px Georgia, serif";
+        ctx.shadowColor = "rgba(0,0,0,0.85)"; ctx.shadowBlur = 10; ctx.shadowOffsetY = 3;
+        ctx.fillText("D A I L Y   W O R D   3 6 0", W / 2, y + 10);
+        ctx.shadowColor = "transparent"; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+        var size = 64, lines = [];
+        while (size >= 38) {
+          ctx.font = (opts.italic ? "italic " : "") + size + "px Georgia, serif";
+          lines = wrapCanvasText(ctx, opts.body, W - 220);
+          if (lines.length <= 8) break;
+          size -= 6;
+        }
+        var lh = Math.round(size * 1.45);
+        var startY = 560 - ((lines.length - 1) * lh) / 2;
+        var refY = startY + lines.length * lh + 60;
+        /* soft feathered dark band behind the verse + reference, same trick
+           as the wallpaper phone stills, so the text stays readable */
+        var bandTop = startY - 100, bandBot = refY + 55;
+        var bg = ctx.createLinearGradient(0, bandTop, 0, bandBot);
+        bg.addColorStop(0, "rgba(0,0,0,0)");
+        bg.addColorStop(0.18, "rgba(0,0,0,0.5)");
+        bg.addColorStop(0.82, "rgba(0,0,0,0.5)");
+        bg.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = bg;
+        ctx.fillRect(84, bandTop, W - 168, bandBot - bandTop);
+        /* verse in white serif with the deep dark shadow (Daily Word 360 style) */
+        ctx.fillStyle = "#f3eedd";
+        ctx.shadowColor = "rgba(0,0,0,0.9)"; ctx.shadowBlur = 14; ctx.shadowOffsetY = 5;
+        lines.forEach(function (ln, i) { ctx.fillText(ln, W / 2, startY + i * lh); });
+        ctx.fillStyle = "#b9975b";
+        ctx.font = "700 34px Georgia, serif";
+        ctx.fillText(opts.ref, W / 2, refY);
+        ctx.shadowColor = "rgba(0,0,0,0.7)"; ctx.shadowBlur = 8; ctx.shadowOffsetY = 3;
+        ctx.font = "28px Georgia, serif";
+        ctx.fillStyle = "#c3cdb9";
+        ctx.fillText("30-Day Prayer Journal", W / 2, H - 150);
+        ctx.fillText("dailyverse.gumroad.com/l/hfuap", W / 2, H - 105);
+        ctx.shadowColor = "transparent"; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+        return cv;
+      }
       function showCardModal(dataUrl, filename) {
         closeCardModal();
         var ov = document.createElement("div");
@@ -691,8 +806,20 @@
         var di = dayIndexOfYear(date);
         var form = dayForm(date);
         var v = VERSES.find(function (x) { return x.ref === form.verseRef; }) || VERSES[di % VERSES.length];
-        var cv = drawPrayerCard({ body: "\u201C" + v.text + "\u201D", ref: v.ref + " (NIV)", italic: true });
-        showCardModal(cv.toDataURL("image/png"), "daily-word-360-verse-card.png");
+        var opts = { body: "\u201C" + v.text + "\u201D", ref: v.ref + " (NIV)", italic: true };
+        /* wait for the nature scene to load before drawing, so the card
+           never renders on a blank background; fall back to the green
+           card if the scene fails to load */
+        var img = new Image();
+        img.onload = function () {
+          var cv = drawVerseCard(opts, img);
+          showCardModal(cv.toDataURL("image/png"), "daily-word-360-verse-card.png");
+        };
+        img.onerror = function () {
+          var cv = drawPrayerCard(opts);
+          showCardModal(cv.toDataURL("image/png"), "daily-word-360-verse-card.png");
+        };
+        img.src = pickVerseScene(v.ref);
       }
       function sharePrayerCard(date) {
         var form = dayForm(date);
