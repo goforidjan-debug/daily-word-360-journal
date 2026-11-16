@@ -25,70 +25,51 @@
     <title>Daily Word 360 Journal</title>
     <style>
       :root {
-        /* The printed journal's palette: deep green and gold on cream. */
-        --surface: #fffdf7;
-        --surface-alt: #f6f2e7;
-        --header-surface: #fdfaf2;
-        --text: #26332c;
-        --header-text: #f3eedd;
-        --dim: #5c6b61;
-        --header-dim: #c3cdb9;
-        --border: #e4dcc4;
-        --accent: #1f4d3f;
-        --gold: #b9975b;
-        --gold-deep: #a07d2c;
-        --radius: 10px;
-        /* Two-tone green silk: the journal green and a darker green folded
-           together in soft diagonal bands, like light across woven silk. */
-        --silk-bg:
-          radial-gradient(130% 80% at 12% -10%, rgba(84, 150, 118, 0.32), transparent 55%),
-          radial-gradient(120% 90% at 105% 110%, rgba(0, 0, 0, 0.48), transparent 62%),
-          repeating-linear-gradient(
-            118deg,
-            rgba(255, 255, 255, 0.045) 0,
-            rgba(255, 255, 255, 0.045) 70px,
-            rgba(0, 0, 0, 0.13) 130px,
-            rgba(255, 255, 255, 0.02) 200px,
-            rgba(0, 0, 0, 0.08) 280px
-          ),
-          linear-gradient(165deg, #20503a 0%, #143527 48%, #081a10 100%);
+        /* Steadfast-style palette: dark slate, steel blue-grey + warm tan. */
+        --surface: #171c21;
+        --surface-alt: #1f262d;
+        --header-surface: #171c21;
+        --text: #f2f4f6;
+        --header-text: #f2f4f6;
+        --dim: #9aa7b1;
+        --header-dim: #9aa7b1;
+        --border: rgba(255,255,255,0.10);
+        --accent: #c98d4b;
+        --blue: #5b7a94;
+        --blue-deep: #3d5a74;
+        --gold: #c98d4b;
+        --gold-deep: #dda964;
+        --radius: 18px;
+        color-scheme: dark;
       }
       html, body { margin: 0; padding: 0; }
       body {
         font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-        background-color: #0e2417;
-        background-image: var(--silk-bg);
+        background-color: #0e1216;
+        background-image:
+          radial-gradient(120% 60% at 15% -5%, rgba(91,122,148,0.28), transparent 55%),
+          radial-gradient(100% 60% at 105% 105%, rgba(201,141,75,0.14), transparent 55%);
         background-attachment: fixed;
-        animation: silk-drift 26s ease-in-out infinite alternate;
         color: var(--text);
         -webkit-font-smoothing: antialiased;
-      }
-      @keyframes silk-drift {
-        from { background-position: 0 0, 0 0, 0 0, 0 0; }
-        to { background-position: 0 0, 0 0, 280px 0, 0 0; }
-      }
-      @media (prefers-reduced-motion: reduce) {
-        body { animation: none; }
       }
       button, [role="button"], select, summary, input:not([type="checkbox"], [type="radio"]) { min-height: 2.25rem; }
       button { font: inherit; cursor: pointer; background: none; border: none; color: inherit; }
       input, textarea { font: inherit; }
-      .font-journal { font-family: Georgia, "Times New Roman", serif; }
+      .font-journal { font-family: inherit; }
 
       .wrap { max-width: 42rem; margin: 0 auto; padding: 1rem 1rem 11rem; }
 
       /* Header */
       .hdr { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; padding-bottom: 0.5rem; }
-      .hdr-date { font-size: 1.5rem; line-height: 1.25; color: var(--gold); margin: 0; }
+      .hdr-date { font-size: 1.35rem; line-height: 1.25; font-weight: 700; color: var(--gold-deep); margin: 0; }
       .hdr-clock-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 0.75rem; margin-top: 0.25rem; }
-      .hdr-clock { font-size: 2.25rem; line-height: 1.1; color: var(--header-text); }
+      .hdr-clock { font-size: 2rem; line-height: 1.1; font-weight: 700; color: var(--header-text); }
       .hdr-phase { font-size: 1rem; color: var(--header-dim); }
       .hdr-rhythm { margin: 0.5rem 0 0; font-size: 0.875rem; color: var(--header-dim); }
       .hdr-rhythm .on { font-weight: 600; color: var(--header-text); }
 
-      /* The logo: a band of light sweeps across it on a gentle loop, and
-         the gold brightens as the light passes over it. */
-      .logo-shine { position: relative; flex: none; width: 4rem; height: 4rem; overflow: hidden; border-radius: 8px; border: 1px solid var(--gold); margin: 0; }
+      .logo-shine { position: relative; flex: none; width: 4rem; height: 4rem; overflow: hidden; border-radius: 16px; border: 1px solid var(--gold); margin: 0; }
       @media (min-width: 640px) { .logo-shine { width: 5rem; height: 5rem; } }
       .logo-shine img { width: 100%; height: 100%; object-fit: cover; display: block; animation: logo-gold-glow 6s ease-in-out infinite; }
       .logo-shine::after {
@@ -107,28 +88,29 @@
       .viewing-note { display: flex; align-items: center; gap: 0.75rem; margin-top: 0.75rem; font-size: 0.875rem; color: var(--header-dim); }
 
       .pill-btn {
-        border: 1px solid var(--border); border-radius: 999px; padding: 0.25rem 1rem;
-        font-size: 1rem; color: var(--accent); background: var(--surface);
+        border: 1px solid rgba(255,255,255,0.14); border-radius: 999px; padding: 0.25rem 1rem;
+        font-size: 1rem; color: var(--text); background: var(--surface-alt);
       }
-      .pill-btn.on-dark { background: transparent; color: var(--header-text); border-color: rgba(228,220,196,0.55); }
-      .pill-btn.gold-outline { border-color: var(--gold); font-weight: 600; font-size: 0.875rem; padding: 0.25rem 0.75rem; }
+      .pill-btn.on-dark { background: var(--surface-alt); color: var(--header-text); border-color: rgba(255,255,255,0.14); }
+      .pill-btn.gold-outline { border-color: var(--gold); color: var(--gold-deep); font-weight: 600; font-size: 0.875rem; padding: 0.25rem 0.75rem; }
       .cta-btn {
-        border-radius: 999px; background: var(--accent); color: var(--header-surface);
-        padding: 0.5rem 1.25rem; font-size: 0.875rem; font-weight: 600;
+        border-radius: 999px; background: var(--accent); color: #1c130a;
+        padding: 0.65rem 1.5rem; font-size: 0.95rem; font-weight: 700;
       }
       .cta-btn:disabled { opacity: 0.5; }
 
       /* Cards and sections */
       .card {
         background: var(--surface); border: 1px solid var(--border);
-        border-radius: var(--radius); padding: 1rem; margin-bottom: 1.25rem;
+        border-radius: var(--radius); padding: 1.1rem; margin-bottom: 1.25rem;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.25);
       }
-      .card.active { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold); }
-      .card h2, .sec h2, .sec h3 { color: var(--accent); margin: 0; }
+      .card.active { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold), 0 8px 24px rgba(0,0,0,0.25); }
+      .card h2, .sec h2, .sec h3 { color: #fff; margin: 0; }
       .sec { margin-bottom: 2rem; }
       .sec-title-row { display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; }
       .sec-time { font-size: 0.875rem; color: var(--dim); display: flex; align-items: center; gap: 0.5rem; }
-      .now-badge { background: var(--gold); color: #26332c; border-radius: 999px; padding: 0.125rem 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+      .now-badge { background: var(--gold); color: #1c130a; border-radius: 999px; padding: 0.125rem 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
       .gold-rule { width: 52px; border: none; border-top: 2px solid var(--gold); margin: 0.75rem 0; }
       .label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--gold-deep); margin: 0; }
       .stack > * + * { margin-top: 1rem; }
@@ -137,45 +119,45 @@
       .small-dim { font-size: 0.875rem; color: var(--dim); margin: 0; }
 
       .verse {
-        background: var(--surface-alt); border: 1px solid var(--border);
-        border-radius: var(--radius); padding: 0.75rem 1rem; margin: 0;
+        background: #232d36; border: 1px solid rgba(91,122,148,0.4);
+        border-radius: 16px; padding: 0.9rem 1rem; margin: 0;
       }
-      .verse blockquote { margin: 0; font-size: 1.125rem; font-style: italic; line-height: 1.6; color: var(--accent); }
+      .verse blockquote { margin: 0; font-size: 1.125rem; line-height: 1.6; color: #fff; }
       .verse figcaption { margin-top: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--gold-deep); }
 
       textarea.journal, input.journal, input.line-input {
         width: 100%; box-sizing: border-box; margin-top: 0.25rem;
-        border: 1px solid var(--border); border-radius: var(--radius);
-        background: var(--surface); color: var(--text);
+        border: 1px solid rgba(255,255,255,0.12); border-radius: 14px;
+        background: var(--surface-alt); color: var(--text);
         padding: 5px 0.75rem; font-size: 1rem;
       }
       textarea.journal {
         resize: vertical; line-height: 28px;
-        background-image: repeating-linear-gradient(to bottom, transparent 0, transparent 27px, rgba(185,151,91,0.28) 27px, rgba(185,151,91,0.28) 28px);
+        background-image: repeating-linear-gradient(to bottom, transparent 0, transparent 27px, rgba(201,141,75,0.20) 27px, rgba(201,141,75,0.20) 28px);
       }
       input.line-input { padding: 0.5rem 0.75rem; }
-      textarea.journal::placeholder { color: var(--dim); }
+      textarea.journal::placeholder, input::placeholder { color: var(--dim); }
       .field { margin: 0; }
 
       .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
       .chip {
-        border: 1px solid var(--border); border-radius: 999px; padding: 0.25rem 0.75rem;
-        font-size: 0.875rem; color: var(--dim); background: var(--surface); min-height: 2.25rem;
+        border: 1px solid rgba(255,255,255,0.14); border-radius: 999px; padding: 0.25rem 0.75rem;
+        font-size: 0.875rem; color: var(--dim); background: var(--surface-alt); min-height: 2.25rem;
       }
-      .chip.sel { border-color: var(--gold); background: #e9efe7; font-weight: 600; color: var(--accent); }
+      .chip.sel { border-color: var(--gold); background: var(--gold); font-weight: 700; color: #1c130a; }
 
-      .prompt-big { font-size: 1.5rem; line-height: 1.35; color: var(--text); margin: 0.25rem 0 0; }
-      .midday-line { font-size: 1.125rem; font-style: italic; line-height: 1.6; color: var(--text); margin: 0; }
+      .prompt-big { font-size: 1.4rem; line-height: 1.35; font-weight: 700; color: #fff; margin: 0.25rem 0 0; }
+      .midday-line { font-size: 1.125rem; font-style: italic; line-height: 1.6; color: #fff; margin: 0; }
 
       /* 30 prompts list */
-      .prompt-list { list-style: none; margin: 0.75rem 0 0; padding: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+      .prompt-list { list-style: none; margin: 0.75rem 0 0; padding: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
       .prompt-list li + li { border-top: 1px solid var(--border); }
       .prompt-list button {
         display: flex; width: 100%; align-items: baseline; gap: 0.75rem;
-        padding: 0.5rem 0.75rem; text-align: left; font-size: 1rem; color: var(--text);
+        padding: 0.6rem 0.75rem; text-align: left; font-size: 1rem; color: var(--text);
       }
-      .prompt-list button.current { background: #e9efe7; }
-      .prompt-list .n { font-family: Georgia, "Times New Roman", serif; width: 1.75rem; flex: none; font-size: 1.125rem; font-weight: 700; color: var(--accent); }
+      .prompt-list button.current { background: rgba(201,141,75,0.18); }
+      .prompt-list .n { width: 1.75rem; flex: none; font-size: 1.125rem; font-weight: 700; color: var(--gold-deep); }
       .prompt-list button.current .n { color: var(--gold-deep); }
       .prompt-list button:disabled { cursor: default; }
 
@@ -186,38 +168,39 @@
       .cal-dow { padding: 0.25rem 0; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--header-dim); }
       .cal-cell {
         position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
-        min-height: 3rem; padding: 0.25rem 0; border-radius: var(--radius);
+        min-height: 3rem; padding: 0.25rem 0; border-radius: 12px;
         border: 1px solid transparent; color: var(--header-text); font-size: 1rem;
-        background: rgba(255, 253, 247, 0.07);
+        background: rgba(255,255,255,0.05);
       }
       .cal-cell.out { opacity: 0.45; }
-      .cal-cell.sel { border-color: var(--gold); background: rgba(255, 253, 247, 0.2); }
-      .cal-cell .today-num { font-weight: 700; color: var(--gold); }
-      .cal-cell.written { background: rgba(185, 151, 91, 0.32); border-color: rgba(185, 151, 91, 0.55); }
-      .cal-cell.written.sel { background: rgba(185, 151, 91, 0.45); }
-      .cal-prayed { margin-top: 1px; font-size: 0.5rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); line-height: 1; }
+      .cal-cell.sel { border-color: var(--gold); background: rgba(201,141,75,0.22); }
+      .cal-cell .today-num { font-weight: 700; color: var(--gold-deep); }
+      .cal-cell.written { background: rgba(201,141,75,0.35); border-color: rgba(201,141,75,0.6); }
+      .cal-cell.written.sel { background: rgba(201,141,75,0.45); }
+      .cal-prayed { margin-top: 1px; font-size: 0.5rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold-deep); line-height: 1; }
 
-      /* New features: verse hero, streak, timer, PIN, cards, music, export */
-      .verse-hero { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1rem; margin-bottom: 1.25rem; text-align: center; }
-      .verse-hero blockquote { margin: 0; font-size: 1.5rem; line-height: 1.45; color: var(--accent); font-style: italic; }
-      .verse-hero figcaption { margin-top: 0.75rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--gold-deep); }
+      /* Verse hero, streak, timer, PIN, cards, music, export */
+      .verse-hero { background: linear-gradient(160deg, #5b7a94, #3d5a74); border: none; border-radius: 24px; padding: 1.5rem 1.25rem; margin-bottom: 1.25rem; text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,0.25); }
+      .verse-hero .label { color: rgba(255,255,255,0.75); }
+      .verse-hero blockquote { margin: 0; font-size: 1.4rem; line-height: 1.45; color: #fff; }
+      .verse-hero figcaption { margin-top: 0.75rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.75); }
       .streak-bar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.25rem 0.75rem; margin-bottom: 1rem; }
-      .streak-pill { background: rgba(185, 151, 91, 0.25); border: 1px solid rgba(185, 151, 91, 0.6); color: var(--header-text); border-radius: 999px; padding: 0.25rem 0.75rem; font-size: 0.875rem; font-weight: 600; white-space: nowrap; }
+      .streak-pill { background: rgba(201,141,75,0.22); border: 1px solid rgba(201,141,75,0.55); color: #f0c98a; border-radius: 999px; padding: 0.25rem 0.75rem; font-size: 0.875rem; font-weight: 600; white-space: nowrap; }
       .streak-nudge { font-size: 0.875rem; color: var(--header-dim); margin: 0; }
-      .timer-display { font-size: 2.5rem; line-height: 1.1; text-align: center; color: var(--accent); margin: 0.5rem 0; font-variant-numeric: tabular-nums; }
+      .timer-display { font-size: 3rem; line-height: 1.1; text-align: center; color: #fff; margin: 0.5rem 0; font-variant-numeric: tabular-nums; font-weight: 700; }
       .timer-row { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; margin-top: 0.75rem; }
       .pin-input { width: 10rem; text-align: center; font-size: 1.25rem; letter-spacing: 0.4em; }
       .lock-shake { animation: lock-shake 0.3s; }
       @keyframes lock-shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
-      #lock-screen { position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; padding: 2rem; background-color: #0e2417; background-image: var(--silk-bg); color: var(--header-text); text-align: center; }
-      #lock-screen input { width: 10rem; text-align: center; font-size: 1.5rem; letter-spacing: 0.5em; padding: 0.5rem; border-radius: var(--radius); border: 1px solid var(--gold); background: var(--surface); color: var(--text); }
-      .music-bar { position: fixed; left: 0; right: 0; z-index: 9; background: var(--surface); border-top: 1px solid var(--border); }
+      #lock-screen { position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; padding: 2rem; background-color: #0e1216; background-image: radial-gradient(120% 60% at 15% -5%, rgba(91,122,148,0.28), transparent 55%), radial-gradient(100% 60% at 105% 105%, rgba(201,141,75,0.14), transparent 55%); color: var(--header-text); text-align: center; }
+      #lock-screen input { width: 10rem; text-align: center; font-size: 1.5rem; letter-spacing: 0.5em; padding: 0.5rem; border-radius: 14px; border: 1px solid var(--gold); background: var(--surface-alt); color: var(--text); }
+      .music-bar { position: fixed; left: 0; right: 0; z-index: 9; background: #14181c; border-top: 1px solid rgba(255,255,255,0.10); }
       .music-bar .inner { max-width: 42rem; margin: 0 auto; display: flex; align-items: center; gap: 0.5rem; padding: 0.375rem 0.75rem; }
       .music-bar .track-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.875rem; color: var(--text); background: none; border: none; text-align: left; padding: 0; }
-      .music-btn { border: 1px solid var(--border); border-radius: 999px; width: 2.25rem; height: 2.25rem; min-height: 2.25rem; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: var(--accent); background: var(--surface); flex: none; padding: 0; }
+      .music-btn { border: 1px solid rgba(255,255,255,0.14); border-radius: 999px; width: 2.25rem; height: 2.25rem; min-height: 2.25rem; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: var(--gold-deep); background: var(--surface-alt); flex: none; padding: 0; }
       .music-bar input[type="range"] { width: 4.5rem; flex: none; accent-color: var(--accent); }
-      .modal { position: fixed; inset: 0; z-index: 60; background: rgba(8, 26, 16, 0.88); display: flex; align-items: center; justify-content: center; padding: 1rem; }
-      .modal .modal-card { background: var(--surface); border-radius: var(--radius); padding: 1rem; max-width: 30rem; width: 100%; text-align: center; max-height: 92vh; overflow-y: auto; }
+      .modal { position: fixed; inset: 0; z-index: 60; background: rgba(8,10,12,0.88); display: flex; align-items: center; justify-content: center; padding: 1rem; }
+      .modal .modal-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 1rem; max-width: 30rem; width: 100%; text-align: center; max-height: 92vh; overflow-y: auto; }
       .modal img { width: 100%; border-radius: 8px; display: block; }
       #print-export { display: none; }
       body.printing #print-export { display: block; }
@@ -227,33 +210,93 @@
       }
 
       /* Tracker cards */
-      .item-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; margin-bottom: 0.75rem; }
-      .item-card .big { font-size: 1.125rem; line-height: 1.55; color: var(--text); margin: 0; }
-      .link-btn { padding: 0.25rem 0.5rem; font-size: 0.875rem; color: var(--accent); text-decoration: underline; min-height: 2.25rem; }
+      .item-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 1rem; margin-bottom: 0.75rem; }
+      .item-card .big { font-size: 1.125rem; line-height: 1.55; color: #fff; margin: 0; }
+      .link-btn { padding: 0.25rem 0.5rem; font-size: 0.875rem; color: var(--gold-deep); text-decoration: underline; min-height: 2.25rem; }
       .link-btn.dim { color: var(--dim); }
-      .danger-btn { padding: 0.25rem 0.5rem; font-size: 0.875rem; font-weight: 600; color: #b3261e; }
-      details.record-answer summary { cursor: pointer; font-size: 0.875rem; font-weight: 600; color: var(--accent); padding: 0.5rem 0; }
-      .form-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; margin: 1rem 0; }
+      .danger-btn { padding: 0.25rem 0.5rem; font-size: 0.875rem; font-weight: 600; color: #ff9a92; }
+      details.record-answer summary { cursor: pointer; font-size: 0.875rem; font-weight: 600; color: var(--gold-deep); padding: 0.5rem 0; }
+      .form-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 1rem; margin: 1rem 0; }
       .row-actions { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.75rem; flex-wrap: wrap; }
       input[type="date"].journal { width: auto; }
 
-      .begin-banner { border-color: var(--gold); background: var(--surface-alt); }
+      .begin-banner { border: none; background: linear-gradient(160deg, #c98d4b, #a96f2f); color: #1c130a; }
+      .begin-banner .label { color: rgba(28,19,10,0.65); }
+      .begin-banner .body-text { color: #241a08; }
 
       /* Bottom nav */
       nav.tabs {
         position: fixed; inset-inline: 0; bottom: 0; z-index: 10;
-        border-top: 1px solid var(--border); background: var(--surface);
+        border-top: 1px solid rgba(255,255,255,0.10); background: #12161a;
         padding-bottom: env(safe-area-inset-bottom);
       }
       nav.tabs .inner { max-width: 42rem; margin: 0 auto; display: grid; grid-template-columns: repeat(5, 1fr); }
       nav.tabs button { padding: 0.75rem 0; font-size: 0.875rem; color: var(--dim); min-height: 3rem; }
-      nav.tabs button[aria-current="page"] { font-weight: 700; color: var(--accent); text-decoration: underline; text-decoration-color: var(--gold); text-decoration-thickness: 2px; text-underline-offset: 4px; }
+      nav.tabs button[aria-current="page"] { font-weight: 700; color: var(--gold-deep); text-decoration: underline; text-decoration-color: var(--gold); text-decoration-thickness: 2px; text-underline-offset: 4px; }
 
       .week-nav { display: flex; align-items: center; justify-content: space-between; }
       .week-nav h2 { font-size: 1.5rem; color: var(--header-text); margin: 0; text-align: center; }
       .week-nav .sub { font-size: 0.875rem; color: var(--header-dim); text-align: center; margin: 0.25rem 0 0; }
       .on-dark-title { color: var(--header-text) !important; }
       .on-dark-dim { color: var(--header-dim) !important; }
+
+      /* ---- New: Home dashboard ---- */
+      .home-hello { font-size: 1.75rem; font-weight: 800; line-height: 1.2; margin: 0.25rem 0 0; color: #fff; }
+      .home-sub { color: var(--dim); margin: 0.25rem 0 0; font-size: 0.95rem; }
+      .qa-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin: 1rem 0 1.25rem; }
+      .qa-btn { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 0.9rem 0.25rem 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
+      .qa-ic { width: 3rem; height: 3rem; border-radius: 999px; background: var(--blue); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; font-weight: 700; }
+      .qa-btn.tan .qa-ic { background: var(--gold); color: #1c130a; }
+      .qa-label { font-size: 0.8rem; font-weight: 600; color: var(--text); text-align: center; }
+      .panel-blue { background: linear-gradient(160deg, #5b7a94, #3d5a74); border: none; color: #fff; }
+      .panel-blue .label { color: rgba(255,255,255,0.75); }
+      .panel-blue h2, .panel-blue .body-text, .panel-blue .prompt-big { color: #fff; }
+      .panel-tan { background: linear-gradient(160deg, #c98d4b, #a96f2f); border: none; color: #1c130a; }
+      .panel-tan .label { color: rgba(28,19,10,0.65); }
+      .panel-tan h2, .panel-tan .body-text, .panel-tan .prompt-big { color: #1c130a; }
+
+      /* ---- New: progress ring + badges ---- */
+      .ring-wrap { display: flex; align-items: center; gap: 1rem; }
+      .ring-num { font-size: 1.75rem; font-weight: 800; color: #fff; }
+      .ring-cap { font-size: 0.875rem; color: var(--dim); margin: 0.25rem 0 0; }
+      .badge-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.6rem; margin-top: 0.75rem; }
+      .badge { background: var(--surface-alt); border: 1px solid var(--border); border-radius: 16px; padding: 0.75rem 0.25rem; text-align: center; }
+      .badge.earned { border-color: rgba(201,141,75,0.6); background: rgba(201,141,75,0.16); }
+      .badge.earned .b-ic { color: var(--gold-deep); }
+      .badge.locked { opacity: 0.55; }
+      .badge.locked .b-ic { color: var(--dim); }
+      .badge .b-ic { font-size: 1.4rem; }
+      .qa-ic svg { width: 1.5rem; height: 1.5rem; }
+      .badge .b-ic svg { width: 1.35rem; height: 1.35rem; vertical-align: middle; }
+      .streak-pill svg { width: 1em; height: 1em; vertical-align: -0.15em; }
+      .music-btn svg { width: 1.15rem; height: 1.15rem; }
+      .badge .b-name { display: block; font-size: 0.7rem; font-weight: 700; margin-top: 0.35rem; line-height: 1.25; color: var(--text); }
+
+      /* ---- New: timer screen ---- */
+      .timer-ring-box { position: relative; width: 220px; height: 220px; margin: 0.5rem auto 0; }
+      .timer-ring-box svg { display: block; }
+      .timer-centre { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.25rem; }
+      .timer-centre .timer-display { font-size: 2.75rem; margin: 0; }
+      .timer-centre .timer-sub { font-size: 0.875rem; color: var(--dim); }
+
+      /* ---- New: mood check ---- */
+      .mood-row { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 0.9rem 1rem; margin-bottom: 0.75rem; }
+      .mood-labels { display: flex; justify-content: space-between; font-size: 0.875rem; font-weight: 600; }
+      .mood-row input[type="range"] { width: 100%; accent-color: var(--gold); margin-top: 0.6rem; }
+
+      /* ---- New: library + more menu ---- */
+      .lib-card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 1rem; margin-bottom: 0.75rem; width: 100%; text-align: left; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+      .lib-title { font-size: 1.1rem; font-weight: 700; color: #fff; margin: 0; }
+      .lib-sub { font-size: 0.875rem; color: var(--dim); margin: 0.25rem 0 0; }
+      .lib-count { flex: none; background: var(--blue); color: #fff; border-radius: 999px; padding: 0.2rem 0.7rem; font-size: 0.8rem; font-weight: 700; }
+      .lib-item { display: flex; width: 100%; text-align: left; gap: 0.75rem; align-items: baseline; padding: 0.7rem 0.25rem; border-top: 1px solid var(--border); font-size: 1rem; color: var(--text); }
+      .back-link { color: var(--gold-deep); font-size: 0.95rem; font-weight: 600; padding: 0.25rem 0; margin-bottom: 0.5rem; }
+
+      /* ---- New: one flowing entry ---- */
+      .entry-title-input { font-size: 1.25rem !important; font-weight: 700; border: none !important; border-bottom: 1px solid var(--border) !important; border-radius: 0 !important; background: transparent !important; padding-left: 0 !important; padding-right: 0 !important; }
+      details.more-fields { margin-top: 1rem; }
+      details.more-fields summary { cursor: pointer; font-size: 0.875rem; font-weight: 700; color: var(--gold-deep); padding: 0.5rem 0; }
+      .hint-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
     </style>
   </head>
   <body>
@@ -283,8 +326,8 @@
 
     <div class="music-bar" id="music-bar" hidden>
       <div class="inner">
-        <button type="button" class="music-btn" id="music-play" aria-label="Play music">&#9654;</button>
-        <button type="button" class="music-btn" id="music-next" aria-label="Next track">&#187;</button>
+        <button type="button" class="music-btn" id="music-play" aria-label="Play music"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+        <button type="button" class="music-btn" id="music-next" aria-label="Next track"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
         <button type="button" class="track-name" id="music-track-name" title="Tap to change track">Music while you pray</button>
         <input type="range" id="music-volume" min="0" max="100" value="40" aria-label="Music volume" />
       </div>
@@ -294,6 +337,19 @@
 
     <script>
       "use strict";
+      /* ---- inline SVG icons (drawn icons, no emoji anywhere in the UI) ---- */
+      var IC = {
+        flame: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true" style="vertical-align:-0.15em"><path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/></svg>',
+        lock: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>',
+        star: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>',
+        play: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>',
+        pause: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>',
+        next: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>',
+        sparkle: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg>',
+        list: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>',
+        note: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>',
+        check: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true" style="vertical-align:-0.12em"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>'
+      };
       /* ============ content: verbatim from the printed journal ============ */
       var VERSES = [
         { text: "Whoever dwells in the shelter of the Most High will rest in the shadow of the Almighty.", ref: "Psalm 91:1", use: "for protection" },
@@ -303,7 +359,7 @@
         { text: "Rejoice always, pray continually, give thanks in all circumstances; for this is God's will for you in Christ Jesus.", ref: "1 Thessalonians 5:16-18", use: "for gratitude" }
       ];
       var EVENING_VERSE = VERSES[3];
-      /* Nature scenes for the shareable verse cards — 24 cinematic scenes,
+      /* Nature scenes for the shareable verse cards — 20 cinematic scenes,
          each a different place, mood and light. Sources: the five Christian
          Live Wallpaper stills (Milky Way, Sunrise Fog, Sunset Mountain,
          Forest Stream, Golden Field) + the wallpaper candidates (Aurora,
@@ -426,7 +482,7 @@
         "Naming what you are praying for helps you recognise the answer when it comes - and sometimes the answer looks different, and better, than the one you imagined.",
         "Keep bringing your whole heart to God. He is listening."
       ];
-      var WELCOME_TEXT = "This journal is a simple companion for your time with God. There is no right way to fill it in and nothing to keep up with. Bring it to your morning devotional, keep it by your bed for your evening prayer, or open it whenever your heart feels full, heavy, or grateful.";
+      var WELCOME_TEXT = "A simple companion for your time with God — morning, midday, and evening.";
       var CLOSING_BLESSING = "May the God of hope fill you with all joy and peace as you trust in Him.";
       var CLOSING_REF = "After Romans 15:13 (NIV)";
       var WEEKDAY_FULL = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
@@ -452,10 +508,17 @@
 
       /* ============ saved state: entries save on this device
          (localStorage), so they are still here when you come back ============ */
-      var EMPTY_DAY = { verseRef: null, thanksgiving: "", requests: "", peopleOnHeart: "", listening: "", oneStep: "", eveningBest: "", eveningHardest: "", eveningHandBack: "", eveningPrayer: "" };
+      var EMPTY_DAY = { verseRef: null, entryTitle: "", entry: "", thanksgiving: "", requests: "", peopleOnHeart: "", listening: "", oneStep: "", eveningBest: "", eveningHardest: "", eveningHandBack: "", eveningPrayer: "" };
       var EMPTY_WEEK = { thankful: "", answers: "", teaching: "", waiting: "", nextWeekPrayer: "" };
       var state = {
-        tab: "today",
+        tab: "home",
+        mood: {},       // date -> {before:{a,t,d,l}, after:{...}}
+        repaired: [],   // dates the user marked as prayed to repair a streak
+        screen: null,   // null | "timer" | "mood-before" | "mood-after" | "mood-done"
+        returnTab: "home",
+        moreView: null, // null | "prayers" | "weekly" | "focus"
+        libDetail: null,
+        libCat: null,
         selectedDate: todayKey(),
         followToday: true,
         cycleStart: null,
@@ -492,6 +555,8 @@
             people: state.people,
             focus: state.focus,
             notes: state.notes,
+            mood: state.mood,
+            repaired: state.repaired,
             nextId: state.nextId,
             settings: state.settings
           };
@@ -512,6 +577,8 @@
           if (Array.isArray(data.people)) state.people = data.people;
           if (data.focus) state.focus = Object.assign(state.focus, data.focus);
           if (typeof data.notes === "string") state.notes = data.notes;
+          if (data.mood && typeof data.mood === "object") state.mood = data.mood;
+          if (Array.isArray(data.repaired)) state.repaired = data.repaired;
           if (data.settings) state.settings = Object.assign({ pinHash: null, musicTrack: 0, musicVolume: 40 }, data.settings);
           var maxId = 0;
           state.answered.concat(state.people).forEach(function (x) { if (x && x.id > maxId) maxId = x.id; });
@@ -533,6 +600,7 @@
         return state.weeks[ws];
       }
       function hasWriting(date) {
+        if (state.repaired && state.repaired.indexOf(date) !== -1) return true;
         var f = state.days[date];
         if (f) { for (var k in f) { if (k !== "verseRef" && f[k]) return true; } }
         var g = state.gratitude[date];
@@ -557,6 +625,8 @@
         if (el) el.textContent = timerText(timerLeft);
         var btn = document.getElementById("timer-start");
         if (btn) btn.textContent = timerRunning ? "Pause" : (timerLeft < timerTotal ? "Resume" : "Start");
+        var ring = document.getElementById("timer-ring");
+        if (ring) { var C = 2 * Math.PI * 88; ring.style.strokeDashoffset = String(C * (1 - timerLeft / timerTotal)); }
       }
       function timerTick() {
         if (timerLeft > 0) {
@@ -804,7 +874,7 @@
           if (!btn) return;
           var orig = btn.getAttribute("data-label") || btn.textContent;
           btn.setAttribute("data-label", orig);
-          btn.textContent = ok ? "Copied ✓" : "Copy didn't work — try in Chrome";
+          if (ok) { btn.innerHTML = "Copied " + IC.check; } else { btn.textContent = "Copy didn't work — try in Chrome"; }
           setTimeout(function () { btn.textContent = orig; }, 2000);
         }
         function fallback() {
@@ -831,8 +901,8 @@
         /* wait for the nature scene to load before drawing, so the card
            never renders on a blank background; fall back to the green
            card if the scene fails to load */
-        var scenePath = pickVerseScene(v.ref);
         var img = new Image();
+        var scenePath = pickVerseScene(v.ref);
         img.onload = function () {
           var cv = drawVerseCard(opts, img);
           showCardModal(cv.toDataURL("image/png"), "daily-word-360-verse-card.png", verseSceneNote(scenePath));
@@ -934,12 +1004,12 @@
         function playAudio() {
           var p = audioEl.play();
           if (p && p.catch) p.catch(function () { /* browsers need a gesture: tap play again */ });
-          playBtn.innerHTML = "&#10074;&#10074;";
+          playBtn.innerHTML = IC.pause;
           playBtn.setAttribute("aria-label", "Pause music");
         }
         function pauseAudio() {
           audioEl.pause();
-          playBtn.innerHTML = "&#9654;";
+          playBtn.innerHTML = IC.play;
           playBtn.setAttribute("aria-label", "Play music");
         }
         audioEl.volume = (state.settings.musicVolume || 40) / 100;
@@ -1013,44 +1083,49 @@
 
         var html = "";
 
-        var streak = prayerStreak();
-        var nudge = hasWriting(todayKey()) ? "Today is written. Well done — come back this evening." : "You have not written today yet — a quiet moment is waiting.";
-        html += '<div class="streak-bar"><span class="streak-pill">' + (streak > 0 ? streak + (streak === 1 ? " day" : " days") + " in a row" : "Start your streak today") + '</span><p class="streak-nudge">' + esc(nudge) + "</p></div>";
         html += '<section class="verse-hero" aria-label="Today&rsquo;s verse"><p class="label" style="text-align:center">Today&rsquo;s verse</p>' +
-          '<blockquote class="font-journal">&ldquo;' + esc(chosen.text) + '&rdquo;</blockquote>' +
+          '<blockquote>&ldquo;' + esc(chosen.text) + '&rdquo;</blockquote>' +
           '<figcaption>' + esc(chosen.ref) + ' (NIV)</figcaption>' +
           '<div class="timer-row"><button type="button" class="cta-btn" id="share-verse-card">Share this verse</button></div></section>';
 
         if (!state.cycleStart && isToday) {
           html += '<section class="card begin-banner" aria-label="Begin the 30-day journey">' + label("Begin the 30-day journey") +
-            '<p class="body-text" style="margin-top:0.25rem">Start Day 1 today, and every day after will carry its prompt from the journal — through the calendar, the morning page, and the whole month.</p>' +
+            '<p class="body-text" style="margin-top:0.25rem">Start Day 1 today. Each day brings its own prompt.</p>' +
             '<button type="button" class="cta-btn" id="begin-btn" style="margin-top:0.75rem">Start Day 1 today</button></section>';
         }
 
-        /* Morning */
+        /* Morning — one job: today's entry */
         var morning = "";
         if (cycleDay != null && prompt) {
           morning += "<div>" + label("Today's prayer prompt — Day " + cycleDay + " of 30") +
-            '<p class="prompt-big font-journal">' + esc(prompt) + "</p></div>";
+            '<p class="prompt-big">' + esc(prompt) + "</p></div>";
         } else {
-          morning += '<p class="dim-text">Your 30-day journey has not begun yet. Set a start date on the Focus page and each day will carry its prompt from the journal.</p>';
+          morning += '<p class="dim-text">Your 30-day journey has not begun yet — set a start date on the Focus page.</p>';
         }
         morning += "<div>" + label("Today's scripture") + '<div style="margin-top:0.25rem">' + verseBlock(chosen, chosen.use) + "</div>" +
           '<div class="chips">' + VERSES.map(function (v) {
             return '<button type="button" class="chip' + (chosen.ref === v.ref ? " sel" : "") + '" data-verse="' + esc(v.ref) + '" aria-label="Pray with ' + esc(v.ref) + '">' + esc(v.ref) + "</button>";
           }).join("") + "</div></div>";
-        morning += field("f-thanksgiving", "Lord, today I thank You for", form.thanksgiving);
-        morning += field("f-requests", "I bring these requests to You", form.requests);
-        morning += field("f-peopleOnHeart", "People on my heart today", form.peopleOnHeart, 2);
-        morning += field("f-listening", "Listening — what I sense God saying", form.listening);
-        morning += field("f-oneStep", "One step I will take today", form.oneStep, 2);
+        morning += "<div>" + label("Today's entry") +
+          '<input class="line-input entry-title-input" id="f-entryTitle" aria-label="Title for today&rsquo;s entry" placeholder="Give today a title" value="' + esc(form.entryTitle || "") + '" />' +
+          '<textarea class="journal" id="f-entry" aria-label="Today&rsquo;s entry" rows="6" placeholder="Write today&rsquo;s entry here.">' + esc(form.entry || "") + "</textarea>" +
+          '<div class="hint-chips">' + ["Thank God for", "Requests", "People on my heart", "Listening", "One step"].map(function (h) {
+            return '<button type="button" class="chip" data-hint="' + esc(h) + '">' + esc(h) + "</button>";
+          }).join("") + "</div></div>";
+        morning += '<details class="more-fields"><summary>More from this morning</summary><div class="stack" style="margin-top:0.5rem">' +
+          field("f-thanksgiving", "Lord, today I thank You for", form.thanksgiving) +
+          field("f-requests", "I bring these requests to You", form.requests) +
+          field("f-peopleOnHeart", "People on my heart today", form.peopleOnHeart, 2) +
+          field("f-listening", "Listening — what I sense God saying", form.listening) +
+          field("f-oneStep", "One step I will take today", form.oneStep, 2) +
+          "</div></details>";
         html += sectionShell("Morning Devotional", "7:00 AM", isToday && phase === "morning", morning);
 
         /* Midday */
         var middayLine = MIDDAY_LINES[di % MIDDAY_LINES.length];
         var cat = PROMPT_CATEGORIES[di % PROMPT_CATEGORIES.length];
         var catPrompt = cat.items[Math.floor(di / PROMPT_CATEGORIES.length) % cat.items.length];
-        var midday = '<p class="midday-line font-journal">' + esc(middayLine) + "</p>";
+        var midday = '<p class="midday-line">' + esc(middayLine) + "</p>";
         midday += "<div>" + label(cat.title + " — a prompt for today") + '<p class="body-text" style="margin-top:0.25rem">' + esc(catPrompt) + "</p></div>";
         midday += "<div>" + label("Three things I am grateful for") +
           '<div class="stack" style="margin-top:0.25rem">' +
@@ -1060,47 +1135,33 @@
         html += sectionShell("Midday Encouragement", "1:00 PM", isToday && phase === "midday", midday);
 
         /* Evening */
-        var evening = '<p class="dim-text">End the day the way Daily Word 360 ends the day: slowly, honestly, and in God&rsquo;s hands. Nothing about today is too small or too tangled to pray about.</p>';
-        evening += field("f-eveningBest", "The best moment of today", form.eveningBest, 2);
-        evening += field("f-eveningHardest", "The hardest moment of today", form.eveningHardest, 2);
-        evening += field("f-eveningHandBack", "Tonight I hand back to You", form.eveningHandBack);
+        var evening = '<p class="dim-text">End the day slowly, honestly, in God&rsquo;s hands.</p>';
         evening += '<div class="field">' + label("My prayer tonight") +
-          '<p class="font-journal" style="font-style:italic;color:var(--dim);margin:0.25rem 0 0">Heavenly Father,</p>' +
+          '<p style="font-style:italic;color:var(--dim);margin:0.25rem 0 0">Heavenly Father,</p>' +
           '<textarea class="journal" id="f-eveningPrayer" aria-label="My prayer tonight" rows="4">' + esc(form.eveningPrayer) + "</textarea>" +
-          '<p class="font-journal" style="font-style:italic;color:var(--dim);margin:0.25rem 0 0">Amen.</p></div>';
+          '<p style="font-style:italic;color:var(--dim);margin:0.25rem 0 0">Amen.</p></div>';
         evening += verseBlock(EVENING_VERSE, EVENING_VERSE.use);
+        evening += '<details class="more-fields"><summary>More from this evening</summary><div class="stack" style="margin-top:0.5rem">' +
+          field("f-eveningBest", "The best moment of today", form.eveningBest, 2) +
+          field("f-eveningHardest", "The hardest moment of today", form.eveningHardest, 2) +
+          field("f-eveningHandBack", "Tonight I hand back to You", form.eveningHandBack) +
+          "</div></details>";
         html += sectionShell("Evening Prayer", "7:00 PM", isToday && phase === "evening", evening);
 
-        /* Prayer timer */
-        html += '<section class="card" aria-label="Prayer timer"><div class="sec-title-row"><h2 class="font-journal" style="font-size:1.25rem">Prayer Timer</h2></div>' + goldRule() +
-          '<p class="dim-text">Settle in, press start, and give God these minutes. A soft chime will tell you when the time is done.</p>' +
-          '<p class="timer-display font-journal" id="timer-display">' + timerText(timerLeft) + '</p>' +
-          '<div class="chips" style="justify-content:center">' + [5, 10, 15].map(function (m) {
-            return '<button type="button" class="chip' + (timerTotal === m * 60 ? " sel" : "") + '" data-timer-min="' + m + '">' + m + " min</button>";
-          }).join("") + "</div>" +
-          '<div class="timer-row"><button type="button" class="cta-btn" id="timer-start">Start</button>' +
-          '<button type="button" class="cta-btn" id="timer-reset">Reset</button></div></section>';
+        /* Prayer timer — opens the full-screen timer */
+        html += '<section class="card" aria-label="Prayer timer"><div class="sec-title-row"><h2 style="font-size:1.25rem">Prayer Timer</h2></div>' + goldRule() +
+          '<p class="dim-text">Give God these minutes — timer, mood check, and a soft chime.</p>' +
+          '<button type="button" class="cta-btn" id="timer-open" style="margin-top:0.75rem">Open prayer timer</button></section>';
 
         /* Keep this day */
         html += '<section class="card" aria-label="Keep this day">' +
-          '<div class="sec-title-row"><h2 class="font-journal" style="font-size:1.25rem">Keep This Day</h2></div>' + goldRule() +
-          '<p class="dim-text">Everything you write here saves automatically on this device, so it is still here when you come back. You can also download today&rsquo;s page as a file to keep — your prompt, scripture, thanksgiving, requests, and evening prayer, all in one place.</p>' +
+          '<div class="sec-title-row"><h2 style="font-size:1.25rem">Keep This Day</h2></div>' + goldRule() +
+          '<p class="dim-text">Everything saves on this device.</p>' +
           '<button type="button" class="cta-btn" id="download-day" style="margin-top:0.75rem">Download this day</button> ' +
           '<button type="button" class="cta-btn" id="download-backup" style="margin-top:0.75rem">Download a backup of everything</button> ' +
           '<button type="button" class="cta-btn" id="share-prayer-card" style="margin-top:0.75rem"' + ((form.eveningPrayer || form.thanksgiving) ? "" : " disabled") + '>Share today&rsquo;s prayer</button> ' +
           '<button type="button" class="cta-btn" id="copy-prayer-card" style="margin-top:0.75rem"' + ((form.eveningPrayer || form.thanksgiving) ? "" : " disabled") + '>Copy today&rsquo;s prayer</button> ' +
           '<button type="button" class="cta-btn" id="export-journal" style="margin-top:0.75rem">Export my 30 days (PDF)</button></section>';
-
-        /* 30 prompts */
-        html += '<section class="sec" aria-label="The 30 days of prayer prompts">' +
-          '<h2 class="font-journal" style="font-size:1.25rem;color:var(--header-text)">30 Days of Prayer Prompts</h2>' + goldRule() +
-          '<p class="dim-text" style="color:var(--header-dim)">One small focus a day for a month. Tap a day to open it, and use the daily prayer page to write it out in full whenever you want to linger.</p>' +
-          '<ol class="prompt-list">' + PROMPTS.map(function (p, i) {
-            var n = i + 1;
-            return '<li><button type="button" data-prompt-day="' + n + '"' + (cycleDay == null ? " disabled" : "") +
-              ' class="' + (cycleDay === n ? "current" : "") + '" aria-label="Day ' + n + ": " + esc(p) + '">' +
-              '<span class="n">' + n + "</span><span>" + esc(p) + "</span></button></li>";
-          }).join("") + "</ol></section>";
 
         view.innerHTML = html;
 
@@ -1108,6 +1169,20 @@
         if (beginBtn) beginBtn.addEventListener("click", function () { state.cycleStart = todayKey(); render(); });
         view.querySelectorAll("[data-verse]").forEach(function (b) {
           b.addEventListener("click", function () { form.verseRef = b.getAttribute("data-verse"); renderToday(); });
+        });
+        bindField("f-entryTitle", form, "entryTitle");
+        bindField("f-entry", form, "entry");
+        view.querySelectorAll("[data-hint]").forEach(function (b) {
+          b.addEventListener("click", function () {
+            var lab = b.getAttribute("data-hint");
+            var ta = document.getElementById("f-entry");
+            if (ta) {
+              var cur = ta.value;
+              ta.value = cur + (cur && !/\n$/.test(cur) ? "\n" : "") + (cur ? "\n" : "") + lab + ": ";
+              form.entry = ta.value; saveJournal();
+              ta.focus();
+            }
+          });
         });
         bindField("f-thanksgiving", form, "thanksgiving");
         bindField("f-requests", form, "requests");
@@ -1119,12 +1194,6 @@
         bindField("f-eveningHandBack", form, "eveningHandBack");
         bindField("f-eveningPrayer", form, "eveningPrayer");
         ["item1", "item2", "item3"].forEach(function (k) { bindField("g-" + k, grat, k); });
-        view.querySelectorAll("[data-prompt-day]").forEach(function (b) {
-          b.addEventListener("click", function () {
-            if (cycleDay == null) return;
-            pickDate(addDays(date, Number(b.getAttribute("data-prompt-day")) - cycleDay), false);
-          });
-        });
         document.getElementById("download-day").addEventListener("click", function () { downloadDay(date); });
         document.getElementById("download-backup").addEventListener("click", function () { downloadBackup(); });
         document.getElementById("share-verse-card").addEventListener("click", function () { shareVerseCard(date); });
@@ -1134,23 +1203,10 @@
           if (text) copyText(text, this);
         });
         document.getElementById("export-journal").addEventListener("click", function () { exportJournal(); });
-        view.querySelectorAll("[data-timer-min]").forEach(function (b) {
-          b.addEventListener("click", function () {
-            stopTimer();
-            timerTotal = Number(b.getAttribute("data-timer-min")) * 60;
-            timerLeft = timerTotal;
-            renderToday();
-          });
-        });
-        document.getElementById("timer-start").addEventListener("click", function () {
-          if (timerRunning) stopTimer(); else startTimer();
-        });
-        document.getElementById("timer-reset").addEventListener("click", function () {
-          stopTimer(); timerLeft = timerTotal; renderToday();
-        });
-        updateTimerDisplay();
+        document.getElementById("timer-open").addEventListener("click", openPrayer);
         saveJournal();
       }
+
 
       function downloadBackup() {
         saveJournal();
@@ -1174,6 +1230,8 @@
         if (cycleDay != null) { lines.push("Day " + cycleDay + " of 30: " + PROMPTS[cycleDay - 1]); lines.push(""); }
         lines.push("Scripture: \"" + chosen.text + "\" — " + chosen.ref + " (NIV)");
         lines.push("");
+        if (form.entryTitle) { lines.push("Title: " + form.entryTitle); lines.push(""); }
+        if (form.entry) { lines.push("My entry today:"); lines.push(form.entry); lines.push(""); }
         function add(lab, val) { if (val) { lines.push(lab + ":"); lines.push(val); lines.push(""); } }
         add("Lord, today I thank You for", form.thanksgiving);
         add("I bring these requests to You", form.requests);
@@ -1208,7 +1266,7 @@
           '<button type="button" class="pill-btn on-dark" id="cal-prev" aria-label="Previous month">&#8249;</button>' +
           '<h2 class="font-journal">' + esc(formatMonthYear(cur.y, cur.m)) + "</h2>" +
           '<button type="button" class="pill-btn on-dark" id="cal-next" aria-label="Next month">&#8250;</button></div>';
-        html += '<p class="dim-text" style="margin:0.5rem 0 0">Days shaded gold and marked PRAYED are days you wrote in — tap any date, then "Open this day", to read it again.</p>';
+        html += '<p class="dim-text" style="margin:0.5rem 0 0">Gold days marked PRAYED are days you wrote in. Tap a date, then "Open this day".</p>';
         html += '<div class="cal-grid">' +
           ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(function (d) { return '<div class="cal-dow">' + d + "</div>"; }).join("") +
           cells.map(function (k) {
@@ -1228,6 +1286,11 @@
             : '<p class="dim-text" style="margin-top:0.5rem">The 30-day journey is not set yet — begin it from the Focus page.</p>') +
           '<p class="dim-text">' + (hasWriting(state.selectedDate) ? "You have written in this day." : "Nothing written in this day yet.") + "</p>" +
           '<button type="button" class="cta-btn" id="cal-open" style="margin-top:0.75rem">Open this day</button></section>';
+
+        var monthDays = 0, monthWritten = 0;
+        cells.forEach(function (k) { var d = parseKey(k); if (d.getMonth() === cur.m && d.getFullYear() === cur.y) { monthDays++; if (hasWriting(k)) monthWritten++; } });
+        html += '<section class="card" aria-label="This month"><p class="label">This month</p>' +
+          '<p class="body-text" style="margin-top:0.5rem">' + monthWritten + " of " + monthDays + " days prayed · " + prayerStreak() + "-day streak</p></section>";
 
         view.innerHTML = html;
         document.getElementById("cal-prev").addEventListener("click", function () { moveCal(-1); });
@@ -1255,11 +1318,12 @@
 
       function renderPrayers() {
         var html = "";
+        if (state.moreView) html += '<button type="button" class="back-link" id="more-back">‹ More</button>';
 
         /* Answered prayers */
         html += '<section class="sec" aria-label="Answered prayers">' +
           '<h2 class="font-journal on-dark-title" style="font-size:1.5rem">Answered Prayers</h2>' + goldRule() +
-          '<p class="dim-text on-dark-dim">Every answered prayer is worth writing down. On a hard day, this page will remind you that God has heard you before — and He hears you still. An answer can be &ldquo;yes&rdquo;, &ldquo;not yet&rdquo;, or &ldquo;I have something better&rdquo; — all three are worth recording.</p>' +
+          '<p class="dim-text on-dark-dim">Every answered prayer is worth writing down.</p>' +
           '<div class="form-card"><div class="stack">' +
           field("np-text", "Add a prayer", "", 2, "What are you praying about?") +
           '<div>' + label("Date prayed") + '<input type="date" class="journal" id="np-date" aria-label="Date prayed for the new prayer" value="' + todayKey() + '" /></div>' +
@@ -1274,7 +1338,7 @@
         /* People */
         html += '<section class="sec" aria-label="People I am praying for">' +
           '<h2 class="font-journal on-dark-title" style="font-size:1.5rem">People I Am Praying For</h2>' + goldRule() +
-          '<p class="dim-text on-dark-dim">Keep the names in front of you. Pray for one or two people each day, and note anything God does — for them, and in you as you pray.</p>' +
+          '<p class="dim-text on-dark-dim">Keep the names in front of you.</p>' +
           '<div class="form-card"><div class="stack">' +
           '<div>' + label("Name") + '<input class="line-input" id="npe-name" aria-label="Name of the person to add" /></div>' +
           field("npe-request", "What I am praying", "", 2) +
@@ -1443,11 +1507,13 @@
         var days = [];
         for (var i = 0; i < 7; i++) days.push(addDays(ws, i));
 
-        var html = '<div class="week-nav">' +
+        var html = "";
+        if (state.moreView) html += '<button type="button" class="back-link" id="more-back">‹ More</button>';
+        html += '<div class="week-nav">' +
           '<button type="button" class="pill-btn on-dark" id="wk-prev" aria-label="Previous week">&#8249;</button>' +
           '<div><h2 class="font-journal">Weekly Reflection</h2><p class="sub">Week of ' + esc(formatShort(ws)) + "</p></div>" +
           '<button type="button" class="pill-btn on-dark" id="wk-next" aria-label="Next week">&#8250;</button></div>' +
-          '<p class="dim-text on-dark-dim" style="margin-top:1rem">A week of prayers can look ordinary day by day and remarkable all together. Use this page at the end of each week to look back before you look ahead.</p>';
+          '<p class="dim-text on-dark-dim" style="margin-top:1rem">Look back before you look ahead.</p>';
 
         html += '<div class="card" style="margin-top:1rem"><div class="stack">' +
           field("w-thankful", "This week, I am most thankful for", form.thankful) +
@@ -1459,7 +1525,7 @@
 
         html += '<section class="sec" aria-label="A week of gratitude">' +
           '<h3 class="font-journal on-dark-title" style="font-size:1.25rem">A Week of Gratitude</h3>' + goldRule() +
-          '<p class="dim-text on-dark-dim">Thanksgiving is a prayer all by itself. Each day this week, write three things — big or small — that you are grateful for.</p>' +
+          '<p class="dim-text on-dark-dim">Three things a day — big or small.</p>' +
           '<div class="stack" style="margin-top:0.75rem">' +
           days.map(function (d, i) {
             var g = gratForm(d);
@@ -1489,6 +1555,7 @@
       function renderFocus() {
         var f = state.focus;
         var html = "";
+        if (state.moreView) html += '<button type="button" class="back-link" id="more-back">‹ More</button>';
 
         html += '<section class="sec" aria-label="Welcome">' +
           '<h2 class="font-journal on-dark-title" style="font-size:1.5rem">Welcome — Your Quiet Place to Pray</h2>' + goldRule() +
@@ -1507,7 +1574,7 @@
 
         html += '<section class="sec" aria-label="My prayer focus for this season">' +
           '<h3 class="font-journal on-dark-title" style="font-size:1.25rem">My Prayer Focus for This Season</h3>' + goldRule() +
-          '<p class="dim-text on-dark-dim">Naming what you are praying for helps you recognise the answer when it comes — and sometimes the answer looks different, and better, than the one you imagined.</p>' +
+          '<p class="dim-text on-dark-dim">Naming what you pray for helps you recognise the answer.</p>' +
           '<div class="form-card"><div class="stack">' +
           field("fo-season", "My prayer for this season", f.seasonPrayer, 2) +
           field("fo-myself", "For myself", f.myself) +
@@ -1519,7 +1586,7 @@
 
         html += '<section class="sec" aria-label="Keep it private">' +
           '<h3 class="font-journal on-dark-title" style="font-size:1.25rem">Keep It Private</h3>' + goldRule() +
-          '<p class="dim-text on-dark-dim">Your prayers are personal. A 4-digit PIN keeps casual eyes out when someone else picks up your phone. It is a privacy screen, not a lock on a safe — and because everything lives only on this phone, there is no "forgot PIN" email: if you forget the PIN, the only way back in is to reset the app, so keep a backup of your journal first.</p>' +
+          '<p class="dim-text on-dark-dim">A 4-digit PIN keeps casual eyes out. Everything lives only on this phone — keep a backup first.</p>' +
           '<div class="form-card"><div class="stack">' +
           (state.settings.pinHash
             ? '<p class="body-text">PIN lock is on.</p>' +
@@ -1536,7 +1603,7 @@
 
         html += '<section class="sec" aria-label="When you do not know what to pray">';
           '<h3 class="font-journal on-dark-title" style="font-size:1.25rem">When You Do Not Know What to Pray</h3>' + goldRule() +
-          '<p class="dim-text on-dark-dim">Some days the words will not come. Borrow these prompts — pick one, pray it in your own words, and let it start the conversation.</p>' +
+          '<p class="dim-text on-dark-dim">Borrow a prompt and make it your own.</p>' +
           '<div class="stack" style="margin-top:0.75rem">' +
           PROMPT_CATEGORIES.map(function (c) {
             return '<div class="item-card" style="margin-bottom:0">' + label(c.title) +
@@ -1548,17 +1615,17 @@
 
         html += '<section class="sec" aria-label="Scripture to pray">' +
           '<h3 class="font-journal on-dark-title" style="font-size:1.25rem">Scripture to Pray</h3>' + goldRule() +
-          '<p class="dim-text on-dark-dim">When your own words run out, pray God&rsquo;s Word back to Him. Read a verse slowly, turn it into a prayer in your own words, and write that prayer beside it.</p>' +
+          '<p class="dim-text on-dark-dim">Pray God&rsquo;s Word back to Him.</p>' +
           '<div class="stack" style="margin-top:0.75rem">' +
           VERSES.map(function (v) { return verseBlock(v, v.use); }).join("") + "</div></section>";
 
         html += '<section class="sec" aria-label="Notes and a closing blessing">' +
           '<h3 class="font-journal on-dark-title" style="font-size:1.25rem">Notes and a Closing Blessing</h3>' + goldRule() +
-          '<p class="dim-text on-dark-dim">Keep this page for verses you discover, words you hear in prayer, and anything you want to remember on the journey.</p>' +
+          '<p class="dim-text on-dark-dim">Verses, words, and things to remember.</p>' +
           '<div class="form-card"><div class="stack">' + field("fo-notes", "My notes", state.notes, 8) + "</div></div>" +
           '<figure class="verse"><blockquote class="font-journal">' + esc(CLOSING_BLESSING) + "</blockquote>" +
           '<figcaption>' + esc(CLOSING_REF) + "</figcaption>" +
-          '<p class="body-text" style="margin-top:0.75rem">Thank you for praying with the Daily Word 360 family. Join us each day for a morning devotional, a midday encouragement, and an evening prayer — and keep bringing your whole heart to God. He is listening.</p></figure></section>';
+          '<p class="body-text" style="margin-top:0.75rem">Thank you for praying with the Daily Word 360 family.</p></figure></section>';
 
         view.innerHTML = html;
         document.getElementById("cycle-set").addEventListener("click", function () {
@@ -1608,13 +1675,387 @@
         saveJournal();
       }
 
+      /* ============ new: greeting, badges, mood, home, library, timer ============ */
+      function greetingForHour(h) { return h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening"; }
+
+      function writtenDays() {
+        var n = 0;
+        for (var k in state.days) { if (hasWriting(k)) n++; }
+        return n;
+      }
+      function gratitudeDays() {
+        var n = 0;
+        for (var k in state.gratitude) { var g = state.gratitude[k]; if (g && (g.item1 || g.item2 || g.item3)) n++; }
+        return n;
+      }
+      function weekDone() {
+        for (var k in state.weeks) { var w = state.weeks[k]; for (var f in w) { if (w[f]) return true; } }
+        return false;
+      }
+      var BADGES = [
+        { id: "first-day", name: "First Day", test: function () { return writtenDays() >= 1; } },
+        { id: "streak-3", name: "3 in a Row", test: function () { return prayerStreak() >= 3; } },
+        { id: "streak-7", name: "7 in a Row", test: function () { return prayerStreak() >= 7; } },
+        { id: "thirty", name: "30 Days", test: function () { return writtenDays() >= 30; } },
+        { id: "answered-1", name: "Answered", test: function () { return state.answered.some(function (p) { return p.dateAnswered != null; }); } },
+        { id: "grateful-7", name: "Grateful Heart", test: function () { return gratitudeDays() >= 7; } },
+        { id: "people-3", name: "People of Prayer", test: function () { return state.people.length >= 3; } },
+        { id: "week-1", name: "Week in Review", test: function () { return weekDone(); } }
+      ];
+      function badgeProgress() {
+        var e = 0;
+        BADGES.forEach(function (b) { if (b.test()) e++; });
+        return { earned: e, total: BADGES.length, pct: Math.round(e / BADGES.length * 100) };
+      }
+      function badgeGridHtml() {
+        return '<div class="badge-grid">' + BADGES.map(function (b) {
+          var on = b.test();
+          return '<div class="badge ' + (on ? "earned" : "locked") + '"><span class="b-ic">' + (on ? IC.star : IC.lock) + '</span><span class="b-name">' + esc(b.name) + "</span></div>";
+        }).join("") + "</div>";
+      }
+      function ringSvg(pct, size, stroke) {
+        var r = (size - stroke) / 2, c = 2 * Math.PI * r;
+        return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + " " + size + '">' +
+          '<circle cx="' + size / 2 + '" cy="' + size / 2 + '" r="' + r + '" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="' + stroke + '"/>' +
+          '<circle cx="' + size / 2 + '" cy="' + size / 2 + '" r="' + r + '" fill="none" stroke="#c98d4b" stroke-width="' + stroke + '" stroke-linecap="round" stroke-dasharray="' + c.toFixed(1) + '" stroke-dashoffset="' + (c * (1 - pct / 100)).toFixed(1) + '" transform="rotate(-90 ' + size / 2 + " " + size / 2 + ')"/>' +
+          "</svg>";
+      }
+      function needsRepair() {
+        var y = addDays(todayKey(), -1), b = addDays(todayKey(), -2);
+        return !hasWriting(y) && hasWriting(b) && state.repaired.indexOf(y) === -1;
+      }
+      function repairStreak() {
+        var y = addDays(todayKey(), -1);
+        if (state.repaired.indexOf(y) === -1) state.repaired.push(y);
+        saveJournal(); render();
+      }
+
+      var MOOD_KEYS = [
+        { k: "a", lo: "Anxious", hi: "At peace", pos: "at peace", neg: "anxious" },
+        { k: "t", lo: "Tired", hi: "Rested", pos: "rested", neg: "tired" },
+        { k: "d", lo: "Down", hi: "Joyful", pos: "joyful", neg: "down" },
+        { k: "l", lo: "Alone", hi: "Close to God", pos: "close to God", neg: "alone" }
+      ];
+      function moodChangeText(m) {
+        if (!m || !m.before || !m.after) return "";
+        var pos = [], neg = [];
+        MOOD_KEYS.forEach(function (mk) {
+          var d = (m.after[mk.k] || 50) - (m.before[mk.k] || 50);
+          if (d >= 15) pos.push("more " + mk.pos);
+          else if (d <= -15) neg.push("more " + mk.neg);
+        });
+        var parts = [];
+        if (pos.length) parts.push("You leave " + pos.join(", "));
+        if (neg.length) parts.push("a little " + neg.join(", "));
+        return parts.length ? parts.join(" — ") + "." : "Steady — a quiet, even time with God.";
+      }
+      function lastMoodLine() {
+        var keys = Object.keys(state.mood || {}).sort();
+        for (var i = keys.length - 1; i >= 0; i--) {
+          var m = state.mood[keys[i]];
+          if (m && m.before && m.after) return "Last time: " + moodChangeText(m);
+        }
+        return "";
+      }
+
+      function openPrayer() {
+        state.returnTab = state.tab;
+        var today = todayKey();
+        var m = state.mood[today];
+        if (timerRunning) { state.screen = "timer"; }
+        else if (m && m.before) { state.screen = "timer"; }
+        else { state.screen = "mood-before"; }
+        render();
+        window.scrollTo(0, 0);
+      }
+      function endTimerFlow() {
+        stopTimer();
+        var today = todayKey();
+        var m = state.mood[today];
+        state.screen = (m && m.after) ? "mood-done" : "mood-after";
+        render();
+        window.scrollTo(0, 0);
+      }
+
+      /* ============ Home tab ============ */
+      function renderHome() {
+        var now = new Date();
+        var di = dayIndexOfYear(todayKey());
+        var defaultVerse = VERSES[di % VERSES.length];
+        var streak = prayerStreak();
+        var prog = badgeProgress();
+        var cycleDay = state.cycleStart ? cycleDayFor(todayKey(), state.cycleStart) : null;
+        var prompt = cycleDay != null ? PROMPTS[cycleDay - 1] : null;
+        var moodLine = lastMoodLine();
+
+        var html = "";
+        html += '<p class="label">Daily Word 360</p>';
+        html += '<h2 class="home-hello">' + greetingForHour(now.getHours()) + "</h2>";
+        html += '<p class="home-sub">' + esc(formatLong(todayKey())) + "</p>";
+        html += '<div class="streak-bar" style="margin-top:0.75rem"><span class="streak-pill">' + IC.flame + ' ' + (streak > 0 ? streak + (streak === 1 ? " day" : " days") + " in a row" : "Start your streak today") + "</span>";
+        if (needsRepair()) html += '<button type="button" class="link-btn" id="repair-streak">Missed yesterday? Repair streak</button>';
+        html += "</div>";
+
+        html += '<div class="qa-grid">' +
+          '<button type="button" class="qa-btn tan" data-qa="pray"><span class="qa-ic">' + IC.play + '</span><span class="qa-label">Pray now</span></button>' +
+          '<button type="button" class="qa-btn" data-qa="today"><span class="qa-ic">' + IC.sparkle + '</span><span class="qa-label">Today</span></button>' +
+          '<button type="button" class="qa-btn" data-qa="library"><span class="qa-ic">' + IC.list + '</span><span class="qa-label">Library</span></button>' +
+          '<button type="button" class="qa-btn" data-qa="music"><span class="qa-ic">' + IC.note + '</span><span class="qa-label">Music</span></button>' +
+          "</div>";
+
+        html += '<section class="card panel-blue" aria-label="Today&rsquo;s verse"><p class="label">Today&rsquo;s verse</p>' +
+          '<blockquote style="margin:0.5rem 0 0;font-size:1.25rem;line-height:1.5">&ldquo;' + esc(defaultVerse.text) + '&rdquo;</blockquote>' +
+          '<p style="margin:0.75rem 0 0;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:rgba(255,255,255,0.75)">' + esc(defaultVerse.ref) + " (NIV)</p></section>";
+
+        if (prompt) {
+          html += '<section class="card panel-tan" aria-label="Today&rsquo;s prompt"><p class="label">Today&rsquo;s prompt — Day ' + cycleDay + " of 30</p>" +
+            '<p class="prompt-big" style="margin-top:0.5rem">' + esc(prompt) + "</p></section>";
+        } else {
+          html += '<section class="card panel-tan" aria-label="Begin the journey"><p class="label">The 30-day journey</p>' +
+            '<p class="prompt-big" style="margin-top:0.5rem">Begin your 30 days of prayer.</p>' +
+            '<button type="button" class="cta-btn" id="home-begin" style="margin-top:0.75rem;background:#1c130a;color:#f0c98a">Start Day 1 today</button></section>';
+        }
+
+        html += '<section class="card" aria-label="Your progress"><p class="label">Your progress</p>' +
+          '<div class="ring-wrap" style="margin-top:0.75rem">' + ringSvg(prog.pct, 84, 9) +
+          '<div><p class="ring-num">' + prog.pct + '%</p><p class="ring-cap">' + prog.earned + " of " + prog.total + " badges · " + writtenDays() + " days prayed</p></div></div>" +
+          badgeGridHtml() +
+          (moodLine ? '<p class="small-dim" style="margin-top:0.75rem">' + esc(moodLine) + "</p>" : "") +
+          "</section>";
+
+        view.innerHTML = html;
+        var hb = document.getElementById("home-begin");
+        if (hb) hb.addEventListener("click", function () { state.cycleStart = todayKey(); render(); });
+        var rp = document.getElementById("repair-streak");
+        if (rp) rp.addEventListener("click", repairStreak);
+        view.querySelectorAll("[data-qa]").forEach(function (b) {
+          b.addEventListener("click", function () {
+            var a = b.getAttribute("data-qa");
+            if (a === "pray") openPrayer();
+            else if (a === "today") { state.tab = "today"; state.screen = null; render(); }
+            else if (a === "library") { state.tab = "library"; state.screen = null; render(); }
+            else if (a === "music") { var pb = document.getElementById("music-play"); if (pb) pb.click(); }
+          });
+        });
+        saveJournal();
+      }
+
+      /* ============ Library tab ============ */
+      function renderLibrary() {
+        if (state.libDetail) { renderLibDetail(); return; }
+        var html = "";
+        html += '<p class="label">Library</p>';
+        html += '<h2 class="home-hello">Prayers to borrow</h2>';
+        html += '<p class="home-sub">Pick one, pray it in your own words.</p>';
+        html += '<div style="margin:1rem 0"><button type="button" class="cta-btn" id="lib-random">Choose for me</button></div>';
+
+        html += '<section class="sec" aria-label="Pray by category">';
+        PROMPT_CATEGORIES.forEach(function (c, ci) {
+          var open = state.libCat === ci;
+          html += '<button type="button" class="lib-card" data-lib-cat="' + ci + '"><span><span class="lib-title">' + esc(c.title) + '</span><span class="lib-sub" style="display:block">' + c.items.length + " prayers</span></span>" +
+            '<span class="lib-count">' + c.items.length + "</span></button>";
+          if (open) {
+            html += '<div class="card" style="margin-top:-0.25rem">';
+            c.items.forEach(function (it, ii) {
+              html += '<button type="button" class="lib-item" data-lib-item="' + ci + ":" + ii + '"><span>' + esc(it) + "</span></button>";
+            });
+            html += "</div>";
+          }
+        });
+        html += "</section>";
+
+        html += '<section class="sec" aria-label="30 days of prayer prompts">';
+        html += '<h2 style="font-size:1.25rem">30 Days of Prayer Prompts</h2>' + goldRule();
+        html += '<ol class="prompt-list">' + PROMPTS.map(function (p, i) {
+          var n = i + 1;
+          var cycleDay = state.cycleStart ? cycleDayFor(todayKey(), state.cycleStart) : null;
+          return '<li><button type="button" data-lib-prompt="' + n + '" class="' + (cycleDay === n ? "current" : "") + '" aria-label="Day ' + n + ": " + esc(p) + '">' +
+            '<span class="n">' + n + "</span><span>" + esc(p) + "</span></button></li>";
+        }).join("") + "</ol></section>";
+
+        view.innerHTML = html;
+        document.getElementById("lib-random").addEventListener("click", function () {
+          var n = 1 + Math.floor(Math.random() * PROMPTS.length);
+          state.libDetail = { kind: "prompt", n: n };
+          renderLibrary();
+        });
+        view.querySelectorAll("[data-lib-cat]").forEach(function (b) {
+          b.addEventListener("click", function () {
+            var ci = Number(b.getAttribute("data-lib-cat"));
+            state.libCat = (state.libCat === ci) ? null : ci;
+            renderLibrary();
+          });
+        });
+        view.querySelectorAll("[data-lib-item]").forEach(function (b) {
+          b.addEventListener("click", function () {
+            var parts = b.getAttribute("data-lib-item").split(":");
+            state.libDetail = { kind: "cat", ci: Number(parts[0]), ii: Number(parts[1]) };
+            renderLibrary();
+          });
+        });
+        view.querySelectorAll("[data-lib-prompt]").forEach(function (b) {
+          b.addEventListener("click", function () {
+            state.libDetail = { kind: "prompt", n: Number(b.getAttribute("data-lib-prompt")) };
+            renderLibrary();
+          });
+        });
+        saveJournal();
+      }
+
+      function renderLibDetail() {
+        var d = state.libDetail;
+        var di = dayIndexOfYear(state.selectedDate);
+        var verse = VERSES[di % VERSES.length];
+        var title, text;
+        if (d.kind === "prompt") { title = "Day " + d.n + " of 30"; text = PROMPTS[d.n - 1]; }
+        else { var c = PROMPT_CATEGORIES[d.ci]; title = c.title; text = c.items[d.ii]; }
+        var html = "";
+        html += '<button type="button" class="back-link" id="lib-back">‹ Library</button>';
+        html += '<h2 class="home-hello">' + esc(title) + "</h2>";
+        html += '<section class="card panel-blue" style="margin-top:1rem" aria-label="Read"><p class="label">Read</p>' +
+          '<blockquote style="margin:0.5rem 0 0;font-size:1.2rem;line-height:1.5">&ldquo;' + esc(verse.text) + '&rdquo;</blockquote>' +
+          '<p style="margin:0.75rem 0 0;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:rgba(255,255,255,0.75)">' + esc(verse.ref) + " (NIV)</p></section>";
+        html += '<section class="card" aria-label="Pray"><p class="label">Pray</p>' +
+          '<p class="prompt-big" style="margin-top:0.5rem">' + esc(text) + "</p></section>";
+        html += '<section class="card" aria-label="Reflect"><p class="label">Reflect</p>' +
+          '<p class="body-text" style="margin-top:0.5rem">Pray it in your own words, then write a line in today&rsquo;s journal.</p>' +
+          '<button type="button" class="cta-btn" id="lib-write" style="margin-top:0.75rem">Write it in today&rsquo;s journal</button></section>';
+        view.innerHTML = html;
+        document.getElementById("lib-back").addEventListener("click", function () { state.libDetail = null; renderLibrary(); });
+        document.getElementById("lib-write").addEventListener("click", function () {
+          var date = todayKey();
+          if (d.kind === "prompt" && state.cycleStart) date = addDays(state.cycleStart, d.n - 1);
+          state.libDetail = null;
+          pickDate(date, true);
+        });
+        saveJournal();
+      }
+
+      /* ============ Timer full screen ============ */
+      function renderTimerScreen() {
+        var di = dayIndexOfYear(state.selectedDate);
+        var form = dayForm(state.selectedDate);
+        var chosen = VERSES.find(function (v) { return v.ref === form.verseRef; }) || VERSES[di % VERSES.length];
+        var cycleDay = state.cycleStart ? cycleDayFor(state.selectedDate, state.cycleStart) : null;
+        var prompt = cycleDay != null ? PROMPTS[cycleDay - 1] : null;
+        var C = (2 * Math.PI * 88).toFixed(1);
+
+        var html = "";
+        html += '<button type="button" class="back-link" id="timer-back">‹ Leave timer</button>';
+        html += '<h2 class="home-hello" style="text-align:center">Prayer Timer</h2>';
+        html += '<div class="timer-ring-box"><svg class="timer-ring" width="220" height="220" viewBox="0 0 220 220">' +
+          '<circle class="track" cx="110" cy="110" r="88" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="10"/>' +
+          '<circle id="timer-ring" class="prog" cx="110" cy="110" r="88" fill="none" stroke="#c98d4b" stroke-width="10" stroke-linecap="round" stroke-dasharray="' + C + '" stroke-dashoffset="' + (2 * Math.PI * 88 * (1 - timerLeft / timerTotal)).toFixed(1) + '" transform="rotate(-90 110 110)"/>' +
+          '</svg><div class="timer-centre"><p class="timer-display" id="timer-display">' + timerText(timerLeft) + '</p><p class="timer-sub">' + (timerRunning ? "Praying now" : "Ready when you are") + "</p></div></div>";
+        if (prompt) html += '<p class="prompt-big" style="text-align:center;margin-top:1rem">' + esc(prompt) + "</p>";
+        html += '<div style="margin-top:1rem">' + verseBlock(chosen, chosen.use) + "</div>";
+        html += '<div class="chips" style="justify-content:center;margin-top:1rem">' + [5, 10, 15].map(function (m) {
+          return '<button type="button" class="chip' + (timerTotal === m * 60 ? " sel" : "") + '" data-timer-min="' + m + '">' + m + " min</button>";
+        }).join("") + "</div>";
+        html += '<div class="timer-row" style="margin-top:1rem"><button type="button" class="cta-btn" id="timer-start">' + (timerRunning ? "Pause" : (timerLeft < timerTotal ? "Resume" : "Start")) + '</button>' +
+          '<button type="button" class="cta-btn" id="timer-reset">Reset</button></div>';
+        html += '<div class="timer-row"><button type="button" class="cta-btn" id="timer-end">End prayer timer</button></div>';
+        html += '<p class="dim-text" style="text-align:center;margin-top:1rem">A soft chime ends the time.</p>';
+
+        view.innerHTML = html;
+        document.getElementById("timer-back").addEventListener("click", function () { stopTimer(); state.screen = null; state.tab = state.returnTab || "home"; render(); });
+        view.querySelectorAll("[data-timer-min]").forEach(function (b) {
+          b.addEventListener("click", function () {
+            stopTimer();
+            timerTotal = Number(b.getAttribute("data-timer-min")) * 60;
+            timerLeft = timerTotal;
+            render();
+          });
+        });
+        document.getElementById("timer-start").addEventListener("click", function () {
+          if (timerRunning) stopTimer(); else startTimer();
+          render();
+        });
+        document.getElementById("timer-reset").addEventListener("click", function () {
+          stopTimer(); timerLeft = timerTotal; render();
+        });
+        document.getElementById("timer-end").addEventListener("click", endTimerFlow);
+        updateTimerDisplay();
+        saveJournal();
+      }
+
+      /* ============ Mood check ============ */
+      function renderMood(stage) {
+        var today = todayKey();
+        var m = state.mood[today] || {};
+        var isBefore = stage === "mood-before";
+        var html = "";
+        if (stage === "mood-done") {
+          html += '<p class="label">Prayer finished</p>';
+          html += '<h2 class="home-hello">How it went</h2>';
+          html += '<section class="card" style="margin-top:1rem"><p class="body-text">' + esc(moodChangeText(m)) + "</p></section>";
+          html += '<button type="button" class="cta-btn" id="mood-done-btn">Done</button>';
+          view.innerHTML = html;
+          document.getElementById("mood-done-btn").addEventListener("click", function () {
+            state.screen = null; state.tab = state.returnTab || "home"; render();
+          });
+          saveJournal();
+          return;
+        }
+        html += '<p class="label">' + (isBefore ? "Before you pray" : "After you pray") + "</p>";
+        html += '<h2 class="home-hello">' + (isBefore ? "How are you arriving in this moment with God?" : "How are you leaving in this moment with God?") + "</h2>";
+        html += '<p class="home-sub">Slide each one to where you are right now.</p>';
+        html += '<div style="margin-top:1rem">';
+        MOOD_KEYS.forEach(function (mk) {
+          var saved = m[isBefore ? "before" : "after"];
+          var val = saved ? (saved[mk.k] == null ? 50 : saved[mk.k]) : 50;
+          html += '<div class="mood-row"><div class="mood-labels"><span>' + esc(mk.lo) + "</span><span>" + esc(mk.hi) + '</span></div>' +
+            '<input type="range" min="0" max="100" value="' + val + '" id="mood-' + mk.k + '" aria-label="' + esc(mk.lo) + " to " + esc(mk.hi) + '"/></div>';
+        });
+        html += "</div>";
+        html += '<button type="button" class="cta-btn" id="mood-save">' + (isBefore ? "Continue to prayer" : "Save & finish") + "</button>";
+        view.innerHTML = html;
+        document.getElementById("mood-save").addEventListener("click", function () {
+          var vals = {};
+          MOOD_KEYS.forEach(function (mk) {
+            var el = document.getElementById("mood-" + mk.k);
+            vals[mk.k] = el ? Number(el.value) : 50;
+          });
+          if (!state.mood[today]) state.mood[today] = {};
+          state.mood[today][isBefore ? "before" : "after"] = vals;
+          saveJournal();
+          if (isBefore) { state.screen = "timer"; startTimer(); render(); }
+          else { state.screen = "mood-done"; render(); }
+        });
+        saveJournal();
+      }
+
+      /* ============ More menu ============ */
+      function renderMore() {
+        var answeredCount = state.answered.filter(function (p) { return p.dateAnswered != null; }).length;
+        var html = "";
+        html += '<p class="label">More</p>';
+        html += '<h2 class="home-hello">Everything else</h2>';
+        html += '<div style="margin-top:1rem">';
+        html += '<button type="button" class="lib-card" data-more="prayers"><span><span class="lib-title">Prayers</span><span class="lib-sub" style="display:block">' + state.answered.length + " tracked · " + answeredCount + " answered · " + state.people.length + " people</span></span><span class=\"lib-count\">›</span></button>";
+        html += '<button type="button" class="lib-card" data-more="weekly"><span><span class="lib-title">Weekly Reflection</span><span class="lib-sub" style="display:block">Week of ' + esc(formatShort(state.weekStart)) + '</span></span><span class="lib-count">›</span></button>';
+        var cyc = state.cycleStart ? "Day " + cycleDayFor(todayKey(), state.cycleStart) + " of 30" : "Journey not begun";
+        html += '<button type="button" class="lib-card" data-more="focus"><span><span class="lib-title">Focus &amp; Settings</span><span class="lib-sub" style="display:block">' + esc(cyc) + " · PIN &amp; notes</span></span><span class=\"lib-count\">›</span></button>";
+        html += "</div>";
+        view.innerHTML = html;
+        view.querySelectorAll("[data-more]").forEach(function (b) {
+          b.addEventListener("click", function () {
+            var v = b.getAttribute("data-more");
+            if (v === "weekly") state.weekStart = mondayOf(state.selectedDate);
+            state.moreView = v;
+            render();
+          });
+        });
+        saveJournal();
+      }
+
       /* ============ shell: header, tabs, clock ============ */
       var TABS = [
+        { id: "home", label: "Home" },
         { id: "today", label: "Today" },
+        { id: "library", label: "Library" },
         { id: "calendar", label: "Calendar" },
-        { id: "prayers", label: "Prayers" },
-        { id: "weekly", label: "Weekly" },
-        { id: "focus", label: "Focus" }
+        { id: "more", label: "More" }
       ];
       var tabbar = document.getElementById("tabbar");
       tabbar.innerHTML = TABS.map(function (t) {
@@ -1623,7 +2064,7 @@
       tabbar.querySelectorAll("[data-tab]").forEach(function (b) {
         b.addEventListener("click", function () {
           state.tab = b.getAttribute("data-tab");
-          if (state.tab === "weekly") state.weekStart = mondayOf(state.selectedDate);
+          state.screen = null; state.moreView = null; state.libDetail = null; state.libCat = null;
           if (state.tab === "calendar") { var d = parseKey(state.selectedDate); state.calCursor = { y: d.getFullYear(), m: d.getMonth() }; }
           render();
           window.scrollTo(0, 0);
@@ -1678,13 +2119,23 @@
           else b.removeAttribute("aria-current");
         });
         renderHeader();
-        if (state.tab === "today") renderToday();
+        if (state.screen === "timer") renderTimerScreen();
+        else if (state.screen === "mood-before" || state.screen === "mood-after" || state.screen === "mood-done") renderMood(state.screen);
+        else if (state.tab === "home") renderHome();
+        else if (state.tab === "today") renderToday();
+        else if (state.tab === "library") renderLibrary();
         else if (state.tab === "calendar") renderCalendar();
-        else if (state.tab === "prayers") renderPrayers();
-        else if (state.tab === "weekly") renderWeekly();
-        else if (state.tab === "focus") renderFocus();
+        else if (state.tab === "more") {
+          if (!state.moreView) renderMore();
+          else if (state.moreView === "prayers") renderPrayers();
+          else if (state.moreView === "weekly") renderWeekly();
+          else if (state.moreView === "focus") renderFocus();
+        }
+        var mb = document.getElementById("more-back");
+        if (mb) mb.addEventListener("click", function () { state.moreView = null; render(); });
         saveJournal();
       }
+
 
       /* Live clock: tick every second; roll the view over at midnight. */
       var lastToday = todayKey();
