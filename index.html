@@ -266,6 +266,10 @@
       .badge.locked { opacity: 0.55; }
       .badge.locked .b-ic { color: var(--dim); }
       .badge .b-ic { font-size: 1.4rem; }
+      .qa-ic svg { width: 1.5rem; height: 1.5rem; }
+      .badge .b-ic svg { width: 1.35rem; height: 1.35rem; vertical-align: middle; }
+      .streak-pill svg { width: 1em; height: 1em; vertical-align: -0.15em; }
+      .music-btn svg { width: 1.15rem; height: 1.15rem; }
       .badge .b-name { display: block; font-size: 0.7rem; font-weight: 700; margin-top: 0.35rem; line-height: 1.25; color: var(--text); }
 
       /* ---- New: timer screen ---- */
@@ -322,8 +326,8 @@
 
     <div class="music-bar" id="music-bar" hidden>
       <div class="inner">
-        <button type="button" class="music-btn" id="music-play" aria-label="Play music">&#9654;</button>
-        <button type="button" class="music-btn" id="music-next" aria-label="Next track">&#187;</button>
+        <button type="button" class="music-btn" id="music-play" aria-label="Play music"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+        <button type="button" class="music-btn" id="music-next" aria-label="Next track"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
         <button type="button" class="track-name" id="music-track-name" title="Tap to change track">Music while you pray</button>
         <input type="range" id="music-volume" min="0" max="100" value="40" aria-label="Music volume" />
       </div>
@@ -333,6 +337,19 @@
 
     <script>
       "use strict";
+      /* ---- inline SVG icons (drawn icons, no emoji anywhere in the UI) ---- */
+      var IC = {
+        flame: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true" style="vertical-align:-0.15em"><path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/></svg>',
+        lock: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>',
+        star: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>',
+        play: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>',
+        pause: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>',
+        next: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>',
+        sparkle: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg>',
+        list: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>',
+        note: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>',
+        check: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true" style="vertical-align:-0.12em"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>'
+      };
       /* ============ content: verbatim from the printed journal ============ */
       var VERSES = [
         { text: "Whoever dwells in the shelter of the Most High will rest in the shadow of the Almighty.", ref: "Psalm 91:1", use: "for protection" },
@@ -836,7 +853,7 @@
           if (!btn) return;
           var orig = btn.getAttribute("data-label") || btn.textContent;
           btn.setAttribute("data-label", orig);
-          btn.textContent = ok ? "Copied ✓" : "Copy didn't work — try in Chrome";
+          if (ok) { btn.innerHTML = "Copied " + IC.check; } else { btn.textContent = "Copy didn't work — try in Chrome"; }
           setTimeout(function () { btn.textContent = orig; }, 2000);
         }
         function fallback() {
@@ -965,12 +982,12 @@
         function playAudio() {
           var p = audioEl.play();
           if (p && p.catch) p.catch(function () { /* browsers need a gesture: tap play again */ });
-          playBtn.innerHTML = "&#10074;&#10074;";
+          playBtn.innerHTML = IC.pause;
           playBtn.setAttribute("aria-label", "Pause music");
         }
         function pauseAudio() {
           audioEl.pause();
-          playBtn.innerHTML = "&#9654;";
+          playBtn.innerHTML = IC.play;
           playBtn.setAttribute("aria-label", "Play music");
         }
         audioEl.volume = (state.settings.musicVolume || 40) / 100;
@@ -1671,7 +1688,7 @@
       function badgeGridHtml() {
         return '<div class="badge-grid">' + BADGES.map(function (b) {
           var on = b.test();
-          return '<div class="badge ' + (on ? "earned" : "locked") + '"><span class="b-ic">' + (on ? "★" : "🔒") + '</span><span class="b-name">' + esc(b.name) + "</span></div>";
+          return '<div class="badge ' + (on ? "earned" : "locked") + '"><span class="b-ic">' + (on ? IC.star : IC.lock) + '</span><span class="b-name">' + esc(b.name) + "</span></div>";
         }).join("") + "</div>";
       }
       function ringSvg(pct, size, stroke) {
@@ -1753,15 +1770,15 @@
         html += '<p class="label">Daily Word 360</p>';
         html += '<h2 class="home-hello">' + greetingForHour(now.getHours()) + "</h2>";
         html += '<p class="home-sub">' + esc(formatLong(todayKey())) + "</p>";
-        html += '<div class="streak-bar" style="margin-top:0.75rem"><span class="streak-pill">🔥 ' + (streak > 0 ? streak + (streak === 1 ? " day" : " days") + " in a row" : "Start your streak today") + "</span>";
+        html += '<div class="streak-bar" style="margin-top:0.75rem"><span class="streak-pill">' + IC.flame + ' ' + (streak > 0 ? streak + (streak === 1 ? " day" : " days") + " in a row" : "Start your streak today") + "</span>";
         if (needsRepair()) html += '<button type="button" class="link-btn" id="repair-streak">Missed yesterday? Repair streak</button>';
         html += "</div>";
 
         html += '<div class="qa-grid">' +
-          '<button type="button" class="qa-btn tan" data-qa="pray"><span class="qa-ic">▶</span><span class="qa-label">Pray now</span></button>' +
-          '<button type="button" class="qa-btn" data-qa="today"><span class="qa-ic">✦</span><span class="qa-label">Today</span></button>' +
-          '<button type="button" class="qa-btn" data-qa="library"><span class="qa-ic">☰</span><span class="qa-label">Library</span></button>' +
-          '<button type="button" class="qa-btn" data-qa="music"><span class="qa-ic">♪</span><span class="qa-label">Music</span></button>' +
+          '<button type="button" class="qa-btn tan" data-qa="pray"><span class="qa-ic">' + IC.play + '</span><span class="qa-label">Pray now</span></button>' +
+          '<button type="button" class="qa-btn" data-qa="today"><span class="qa-ic">' + IC.sparkle + '</span><span class="qa-label">Today</span></button>' +
+          '<button type="button" class="qa-btn" data-qa="library"><span class="qa-ic">' + IC.list + '</span><span class="qa-label">Library</span></button>' +
+          '<button type="button" class="qa-btn" data-qa="music"><span class="qa-ic">' + IC.note + '</span><span class="qa-label">Music</span></button>' +
           "</div>";
 
         html += '<section class="card panel-blue" aria-label="Today&rsquo;s verse"><p class="label">Today&rsquo;s verse</p>' +
