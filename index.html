@@ -406,7 +406,7 @@
         return VERSE_SCENES[h % VERSE_SCENES.length];
       }
       /* Scene notes for the share card: description + added date per scene.
-         Scenes added in the last 14 days show a "✦ NEW" tag under the
+         Scenes added in the last 14 days show a "NEW" tag under the
          card preview. Add new scenes here as well as in VERSE_SCENES. */
       var VERSE_SCENE_META = {
         "scenes/moonlit-night.jpg": { desc: "Full moon glowing through drifting clouds over dark mountain ridges", added: "2026-11-16" },
@@ -419,12 +419,12 @@
         if (!m) return "";
         var added = new Date(m.added + "T00:00:00");
         var isNew = !isNaN(added.getTime()) && (Date.now() - added.getTime()) < 14 * 864e5;
-        return "Scene: " + m.desc + (isNew ? "  \u2726 NEW" : "");
+        return "Scene: " + m.desc + (isNew ? " — NEW" : "");
       }
       /* Godwin's own calm instrumental tracks, played while you pray. */
       var MUSIC_TRACKS = [
         { title: "Linen and Light", file: "music/Linen_and_Light.mp3" },
-        { title: "Before The Sun Returns", file: "music/Before_The_Sun_Returns.mp3" },
+        { title: "Before the Sun Returns", file: "music/Before_The_Sun_Returns.mp3" },
         { title: "Dawn Over the Cathedral", file: "music/Dawn_Over_the_Cathedral.mp3" },
         { title: "Where the Light Rests (Longer version)", file: "music/Where_the_Light_Rests_Longer.mp3" },
         { title: "Stillness in the Sanctuary", file: "music/Stillness_in_the_Sanctuary.mp3" },
@@ -471,7 +471,7 @@
       var PROMPT_CATEGORIES = [
         { title: "For family", items: ["Protection over our home", "Health and strength", "Peace in our relationships", "Guidance for our children", "Provision for what we need"] },
         { title: "For a friend", items: ["Comfort in a hard season", "Courage for a decision", "Rest for a tired heart", "Joy that returns slowly"] },
-        { title: "For yourself", items: ["Wisdom for today's choices", "Patience when answers are slow", "Forgiveness - given and received", "Trust when I cannot see ahead", "A grateful heart"] },
+        { title: "For yourself", items: ["Wisdom for today's choices", "Patience when answers are slow", "Forgiveness — given and received", "Trust when I cannot see ahead", "A grateful heart"] },
         { title: "For your community", items: ["Neighbours in need", "Those who are grieving", "Leaders and teachers", "Peace where there is tension"] }
       ];
       var MIDDAY_LINES = [
@@ -483,7 +483,7 @@
         "Keep bringing your whole heart to God. He is listening."
       ];
       var WELCOME_TEXT = "A simple companion for your time with God — morning, midday, and evening.";
-      var CLOSING_BLESSING = "May the God of hope fill you with all joy and peace as you trust in Him.";
+      var CLOSING_BLESSING = "May the God of hope fill you with all joy and peace as you trust in him, so that you may overflow with hope by the power of the Holy Spirit.";
       var CLOSING_REF = "After Romans 15:13 (NIV)";
       var WEEKDAY_FULL = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
@@ -607,6 +607,17 @@
         if (g && (g.item1 || g.item2 || g.item3)) return true;
         return false;
       }
+      /* Same as hasWriting, but repaired days don't count: a repaired
+         day has no writing in it, so the Calendar must not mark it
+         PRAYED. (The streak still counts repaired days — that is
+         what the repair is for.) */
+      function hasRealWriting(date) {
+        var f = state.days[date];
+        if (f) { for (var k in f) { if (k !== "verseRef" && f[k]) return true; } }
+        var g = state.gratitude[date];
+        if (g && (g.item1 || g.item2 || g.item3)) return true;
+        return false;
+      }
 
       /* ============ new features: streak, timer, PIN, cards, music, export ============ */
       function prayerStreak() {
@@ -624,7 +635,9 @@
         var el = document.getElementById("timer-display");
         if (el) el.textContent = timerText(timerLeft);
         var btn = document.getElementById("timer-start");
-        if (btn) btn.textContent = timerRunning ? "Pause" : (timerLeft < timerTotal ? "Resume" : "Start");
+        if (btn) btn.textContent = timerRunning ? "Pause" : (timerLeft === 0 ? "Start again" : (timerLeft < timerTotal ? "Resume" : "Start"));
+        var sub = document.getElementById("timer-sub");
+        if (sub) sub.textContent = timerLeft === 0 ? "Time's up — Amen" : (timerRunning ? "Praying now" : "Ready when you are");
         var ring = document.getElementById("timer-ring");
         if (ring) { var C = 2 * Math.PI * 88; ring.style.strokeDashoffset = String(C * (1 - timerLeft / timerTotal)); }
       }
@@ -917,7 +930,7 @@
         var form = dayForm(date);
         var text = form.eveningPrayer || form.thanksgiving;
         if (!text) return;
-        var cv = drawPrayerCard({ body: text, ref: "My prayer — " + formatShort(date), italic: false });
+        var cv = drawPrayerCard({ body: "Heavenly Father,\n" + text + "\nAmen.", ref: "My prayer — " + formatShort(date), italic: false });
         showCardModal(cv.toDataURL("image/png"), "daily-word-360-prayer-card.png");
       }
 
@@ -928,6 +941,10 @@
           '<h1 style="text-align:center;font-size:1.75rem;margin:0">My 30 Days of Prayer</h1>' +
           '<p style="text-align:center;color:#5c6b61">Daily Word 360 Journal</p><hr style="width:52px;border:none;border-top:2px solid #b9975b;margin:0.75rem auto" />');
         var keys = Object.keys(state.days).sort();
+        if (state.cycleStart) {
+          var cycleEnd = addDays(state.cycleStart, 29);
+          keys = keys.filter(function (k) { return k >= state.cycleStart && k <= cycleEnd; });
+        }
         var anyDay = false;
         keys.forEach(function (k) {
           if (!hasWriting(k)) return;
@@ -1102,7 +1119,7 @@
         } else {
           morning += '<p class="dim-text">Your 30-day journey has not begun yet — set a start date on the Focus page.</p>';
         }
-        morning += "<div>" + label("Today's scripture") + '<div style="margin-top:0.25rem">' + verseBlock(chosen, chosen.use) + "</div>" +
+        morning += "<div>" + label("Pray with today's verse") + '<div style="margin-top:0.25rem">' + verseBlock(chosen, chosen.use) + "</div>" +
           '<div class="chips">' + VERSES.map(function (v) {
             return '<button type="button" class="chip' + (chosen.ref === v.ref ? " sel" : "") + '" data-verse="' + esc(v.ref) + '" aria-label="Pray with ' + esc(v.ref) + '">' + esc(v.ref) + "</button>";
           }).join("") + "</div></div>";
@@ -1200,7 +1217,7 @@
         document.getElementById("share-prayer-card").addEventListener("click", function () { sharePrayerCard(date); });
         document.getElementById("copy-prayer-card").addEventListener("click", function () {
           var text = dayForm(date).eveningPrayer || dayForm(date).thanksgiving;
-          if (text) copyText(text, this);
+          if (text) copyText("Heavenly Father,\n" + text + "\nAmen.", this);
         });
         document.getElementById("export-journal").addEventListener("click", function () { exportJournal(); });
         document.getElementById("timer-open").addEventListener("click", openPrayer);
@@ -1274,9 +1291,9 @@
             var inMonth = d.getMonth() === cur.m;
             var isSel = k === state.selectedDate;
             var isToday = k === today;
-            return '<button type="button" class="cal-cell' + (inMonth ? "" : " out") + (isSel ? " sel" : "") + (hasWriting(k) ? " written" : "") + '" data-date="' + k + '" aria-label="' + esc(formatLong(k)) + (hasWriting(k) ? " — prayed" : "") + '" aria-pressed="' + isSel + '">' +
+            return '<button type="button" class="cal-cell' + (inMonth ? "" : " out") + (isSel ? " sel" : "") + (hasRealWriting(k) ? " written" : "") + '" data-date="' + k + '" aria-label="' + esc(formatLong(k)) + (hasRealWriting(k) ? " — prayed" : "") + '" aria-pressed="' + isSel + '">' +
               '<span class="' + (isToday ? "today-num" : "") + '">' + d.getDate() + "</span>" +
-              (hasWriting(k) ? '<span class="cal-prayed" aria-hidden="true">Prayed</span>' : "") + "</button>";
+              (hasRealWriting(k) ? '<span class="cal-prayed" aria-hidden="true">Prayed</span>' : "") + "</button>";
           }).join("") + "</div>";
 
         html += '<section class="card" style="margin-top:1.25rem" aria-label="Selected day summary">' + label(formatShort(state.selectedDate)) +
@@ -1284,11 +1301,11 @@
           (selCycle != null && selPrompt
             ? '<p class="dim-text" style="margin-top:0.5rem">Day ' + selCycle + " of 30 — " + esc(selPrompt) + "</p>"
             : '<p class="dim-text" style="margin-top:0.5rem">The 30-day journey is not set yet — begin it from the Focus page.</p>') +
-          '<p class="dim-text">' + (hasWriting(state.selectedDate) ? "You have written in this day." : "Nothing written in this day yet.") + "</p>" +
+          '<p class="dim-text">' + (hasRealWriting(state.selectedDate) ? "You have written in this day." : "Nothing written in this day yet.") + "</p>" +
           '<button type="button" class="cta-btn" id="cal-open" style="margin-top:0.75rem">Open this day</button></section>';
 
         var monthDays = 0, monthWritten = 0;
-        cells.forEach(function (k) { var d = parseKey(k); if (d.getMonth() === cur.m && d.getFullYear() === cur.y) { monthDays++; if (hasWriting(k)) monthWritten++; } });
+        cells.forEach(function (k) { var d = parseKey(k); if (d.getMonth() === cur.m && d.getFullYear() === cur.y) { monthDays++; if (hasRealWriting(k)) monthWritten++; } });
         html += '<section class="card" aria-label="This month"><p class="label">This month</p>' +
           '<p class="body-text" style="margin-top:0.5rem">' + monthWritten + " of " + monthDays + " days prayed · " + prayerStreak() + "-day streak</p></section>";
 
@@ -1576,17 +1593,17 @@
           '<h3 class="font-journal on-dark-title" style="font-size:1.25rem">My Prayer Focus for This Season</h3>' + goldRule() +
           '<p class="dim-text on-dark-dim">Naming what you pray for helps you recognise the answer.</p>' +
           '<div class="form-card"><div class="stack">' +
-          field("fo-season", "My prayer for this season", f.seasonPrayer, 2) +
+          field("fo-season", "My prayer focus for this season", f.seasonPrayer, 2) +
           field("fo-myself", "For myself", f.myself) +
           field("fo-family", "For my family", f.family) +
           field("fo-work", "For my work and calling", f.work) +
-          field("fo-others", "For others I am carrying in prayer", f.others) +
+          field("fo-others", "For others", f.others) +
           "</div></div>" +
           '<div style="margin-top:1rem">' + verseBlock(VERSES[2], VERSES[2].use) + "</div></section>";
 
         html += '<section class="sec" aria-label="Keep it private">' +
           '<h3 class="font-journal on-dark-title" style="font-size:1.25rem">Keep It Private</h3>' + goldRule() +
-          '<p class="dim-text on-dark-dim">A 4-digit PIN keeps casual eyes out. Everything lives only on this phone — keep a backup first.</p>' +
+          '<p class="dim-text on-dark-dim">A 4-digit PIN keeps casual eyes out. Everything lives only on this phone — keep a backup first (Today tab → Keep This Day → Download a backup of everything).</p>' +
           '<div class="form-card"><div class="stack">' +
           (state.settings.pinHash
             ? '<p class="body-text">PIN lock is on.</p>' +
@@ -1601,7 +1618,7 @@
           '<p class="small-dim" id="pin-msg">' + esc(pinNotice) + '</p>' +
           "</div></div></section>";
 
-        html += '<section class="sec" aria-label="When you do not know what to pray">';
+        html += '<section class="sec" aria-label="When you do not know what to pray">' +
           '<h3 class="font-journal on-dark-title" style="font-size:1.25rem">When You Do Not Know What to Pray</h3>' + goldRule() +
           '<p class="dim-text on-dark-dim">Borrow a prompt and make it your own.</p>' +
           '<div class="stack" style="margin-top:0.75rem">' +
@@ -1737,7 +1754,7 @@
         { k: "l", lo: "Alone", hi: "Close to God", pos: "close to God", neg: "alone" }
       ];
       function moodChangeText(m) {
-        if (!m || !m.before || !m.after) return "";
+        if (!m || !m.before || !m.after) return "Steady — a quiet, even time with God.";
         var pos = [], neg = [];
         MOOD_KEYS.forEach(function (mk) {
           var d = (m.after[mk.k] || 50) - (m.before[mk.k] || 50);
@@ -1746,7 +1763,7 @@
         });
         var parts = [];
         if (pos.length) parts.push("You leave " + pos.join(", "));
-        if (neg.length) parts.push("a little " + neg.join(", "));
+        if (neg.length) parts.push((pos.length ? "a little " : "You leave a little ") + neg.join(", "));
         return parts.length ? parts.join(" — ") + "." : "Steady — a quiet, even time with God.";
       }
       function lastMoodLine() {
@@ -1781,7 +1798,9 @@
       function renderHome() {
         var now = new Date();
         var di = dayIndexOfYear(todayKey());
+        var homeForm = dayForm(todayKey());
         var defaultVerse = VERSES[di % VERSES.length];
+        var chosenVerse = VERSES.find(function (v) { return v.ref === homeForm.verseRef; }) || defaultVerse;
         var streak = prayerStreak();
         var prog = badgeProgress();
         var cycleDay = state.cycleStart ? cycleDayFor(todayKey(), state.cycleStart) : null;
@@ -1804,8 +1823,8 @@
           "</div>";
 
         html += '<section class="card panel-blue" aria-label="Today&rsquo;s verse"><p class="label">Today&rsquo;s verse</p>' +
-          '<blockquote style="margin:0.5rem 0 0;font-size:1.25rem;line-height:1.5">&ldquo;' + esc(defaultVerse.text) + '&rdquo;</blockquote>' +
-          '<p style="margin:0.75rem 0 0;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:rgba(255,255,255,0.75)">' + esc(defaultVerse.ref) + " (NIV)</p></section>";
+          '<blockquote style="margin:0.5rem 0 0;font-size:1.25rem;line-height:1.5">&ldquo;' + esc(chosenVerse.text) + '&rdquo;</blockquote>' +
+          '<p style="margin:0.75rem 0 0;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:rgba(255,255,255,0.75)">' + esc(chosenVerse.ref) + " (NIV)</p></section>";
 
         if (prompt) {
           html += '<section class="card panel-tan" aria-label="Today&rsquo;s prompt"><p class="label">Today&rsquo;s prompt — Day ' + cycleDay + " of 30</p>" +
@@ -1905,7 +1924,8 @@
       function renderLibDetail() {
         var d = state.libDetail;
         var di = dayIndexOfYear(state.selectedDate);
-        var verse = VERSES[di % VERSES.length];
+        var libForm = dayForm(state.selectedDate);
+        var verse = VERSES.find(function (v) { return v.ref === libForm.verseRef; }) || VERSES[di % VERSES.length];
         var title, text;
         if (d.kind === "prompt") { title = "Day " + d.n + " of 30"; text = PROMPTS[d.n - 1]; }
         else { var c = PROMPT_CATEGORIES[d.ci]; title = c.title; text = c.items[d.ii]; }
@@ -1919,7 +1939,7 @@
           '<p class="prompt-big" style="margin-top:0.5rem">' + esc(text) + "</p></section>";
         html += '<section class="card" aria-label="Reflect"><p class="label">Reflect</p>' +
           '<p class="body-text" style="margin-top:0.5rem">Pray it in your own words, then write a line in today&rsquo;s journal.</p>' +
-          '<button type="button" class="cta-btn" id="lib-write" style="margin-top:0.75rem">Write it in today&rsquo;s journal</button></section>';
+          '<button type="button" class="cta-btn" id="lib-write" style="margin-top:0.75rem">Write it in that day&rsquo;s journal</button></section>';
         view.innerHTML = html;
         document.getElementById("lib-back").addEventListener("click", function () { state.libDetail = null; renderLibrary(); });
         document.getElementById("lib-write").addEventListener("click", function () {
@@ -1946,13 +1966,13 @@
         html += '<div class="timer-ring-box"><svg class="timer-ring" width="220" height="220" viewBox="0 0 220 220">' +
           '<circle class="track" cx="110" cy="110" r="88" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="10"/>' +
           '<circle id="timer-ring" class="prog" cx="110" cy="110" r="88" fill="none" stroke="#c98d4b" stroke-width="10" stroke-linecap="round" stroke-dasharray="' + C + '" stroke-dashoffset="' + (2 * Math.PI * 88 * (1 - timerLeft / timerTotal)).toFixed(1) + '" transform="rotate(-90 110 110)"/>' +
-          '</svg><div class="timer-centre"><p class="timer-display" id="timer-display">' + timerText(timerLeft) + '</p><p class="timer-sub">' + (timerRunning ? "Praying now" : "Ready when you are") + "</p></div></div>";
+          '</svg><div class="timer-centre"><p class="timer-display" id="timer-display">' + timerText(timerLeft) + '</p><p class="timer-sub" id="timer-sub">' + (timerLeft === 0 ? "Time's up — Amen" : (timerRunning ? "Praying now" : "Ready when you are")) + "</p></div></div>";
         if (prompt) html += '<p class="prompt-big" style="text-align:center;margin-top:1rem">' + esc(prompt) + "</p>";
         html += '<div style="margin-top:1rem">' + verseBlock(chosen, chosen.use) + "</div>";
         html += '<div class="chips" style="justify-content:center;margin-top:1rem">' + [5, 10, 15].map(function (m) {
           return '<button type="button" class="chip' + (timerTotal === m * 60 ? " sel" : "") + '" data-timer-min="' + m + '">' + m + " min</button>";
         }).join("") + "</div>";
-        html += '<div class="timer-row" style="margin-top:1rem"><button type="button" class="cta-btn" id="timer-start">' + (timerRunning ? "Pause" : (timerLeft < timerTotal ? "Resume" : "Start")) + '</button>' +
+        html += '<div class="timer-row" style="margin-top:1rem"><button type="button" class="cta-btn" id="timer-start">' + (timerRunning ? "Pause" : (timerLeft === 0 ? "Start again" : (timerLeft < timerTotal ? "Resume" : "Start"))) + '</button>' +
           '<button type="button" class="cta-btn" id="timer-reset">Reset</button></div>';
         html += '<div class="timer-row"><button type="button" class="cta-btn" id="timer-end">End prayer timer</button></div>';
         html += '<p class="dim-text" style="text-align:center;margin-top:1rem">A soft chime ends the time.</p>';
@@ -1998,7 +2018,7 @@
           return;
         }
         html += '<p class="label">' + (isBefore ? "Before you pray" : "After you pray") + "</p>";
-        html += '<h2 class="home-hello">' + (isBefore ? "How are you arriving in this moment with God?" : "How are you leaving in this moment with God?") + "</h2>";
+        html += '<h2 class="home-hello">' + (isBefore ? "How are you arriving in this moment with God?" : "How are you leaving this moment with God?") + "</h2>";
         html += '<p class="home-sub">Slide each one to where you are right now.</p>';
         html += '<div style="margin-top:1rem">';
         MOOD_KEYS.forEach(function (mk) {
